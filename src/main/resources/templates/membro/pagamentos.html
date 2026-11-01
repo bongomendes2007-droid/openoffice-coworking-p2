@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Pagamentos')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Pagamentos</h1><p>Histórico financeiro de planos, reservas, eventos e multas.</p></div>
+        <div class="text-end"><div class="rotulo">Total pago</div><div class="numero" th:text="${@fmt.moeda(totalPago)}">R$</div></div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <section class="cartao mb-3 border-warning" th:if="${!#lists.isEmpty(pendentes)}">
+        <h2 class="mb-2"><i class="bi bi-exclamation-circle text-warning"></i> Pendentes</h2>
+        <div th:each="c : ${pendentes}" class="d-flex flex-wrap justify-content-between align-items-center gap-2 py-2 border-bottom">
+            <span th:text="${c.descricao}">desc</span>
+            <a class="btn btn-sm btn-primary" th:href="@{/membro/pagamentos/{id}/pagar(id=${c.id})}" th:text="'Pagar ' + ${@fmt.moeda(c.valor)}">Pagar</a>
+        </div>
+    </section>
+
+    <section class="cartao">
+        <div th:if="${#lists.isEmpty(cobrancas)}" class="vazio"><i class="bi bi-receipt"></i>Nenhuma movimentação.</div>
+        <div class="tabela-rolavel" th:unless="${#lists.isEmpty(cobrancas)}">
+            <table class="table">
+                <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Forma</th><th>Situação</th><th class="num">Valor</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${cobrancas}" th:with="pg=${c.pagamentoId != null} ? ${financeiro.buscarPagamento(c.pagamentoId).orElse(null)} : null">
+                    <td class="text-nowrap" th:text="${@fmt.data(c.dataReferencia)}">data</td>
+                    <td th:text="${c.tipo.descricao}">tipo</td>
+                    <td>
+                        <span th:text="${c.descricao}">desc</span>
+                        <small th:if="${pg != null}" class="d-block text-secondary" th:text="'Comprovante ' + ${pg.comprovante}">comp</small>
+                    </td>
+                    <td class="small" th:text="${pg != null} ? ${pg.detalhe} : (${c.tipo.name() == 'MULTA'} ? 'Retida do reembolso' : '-')">PIX</td>
+                    <td>
+                        <span class="selo" th:classappend="${c.status.name() == 'PAGA'} ? 'selo-ok' : (${c.status.name() == 'PENDENTE'} ? 'selo-alerta' : 'selo-neutro')"
+                              th:text="${c.status.descricao}">Paga</span>
+                        <small th:if="${c.valorEstornado.signum() > 0}" class="d-block text-secondary" th:text="'reembolso ' + ${@fmt.moeda(c.valorEstornado)}"></small>
+                    </td>
+                    <td class="num" th:text="${@fmt.moeda(c.valor)}">R$</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

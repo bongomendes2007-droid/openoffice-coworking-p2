@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Meu plano')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div>
+            <h1>Meu plano</h1>
+            <p th:if="${assinaturaAtiva != null}">
+                Plano atual: <strong th:text="${assinaturaAtiva.tipo.descricao}">VIP</strong>,
+                coberto até <strong th:text="${@fmt.data(membro.fimDaCobertura.get())}">data</strong>.
+            </p>
+            <p th:if="${assinaturaAtiva == null}" class="text-danger">Você está sem plano ativo.</p>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <form th:action="@{/membro/plano}" th:object="${form}" method="post" novalidate>
+        <div class="row g-3">
+            <div class="col-sm-6 col-xl-3" th:each="p : ${planos}">
+                <label class="plano-opcao" th:classappend="${p.vip} ? 'vip-op'">
+                    <input type="radio" th:field="*{plano}" th:value="${p}">
+                    <div class="cartao plano" th:classappend="${p.vip} ? 'vip'">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong th:text="${p.descricao}">Plano</strong>
+                            <span th:if="${p.vip}" class="selo selo-vip"><i class="bi bi-star-fill"></i> Mais benefícios</span>
+                        </div>
+                        <div><span class="preco" th:text="${@fmt.moeda(p.preco)}">R$</span>
+                            <span class="text-secondary small" th:text="${p.periodo}">por mês</span></div>
+                        <ul><li th:each="b : ${p.beneficios}" th:text="${b}">benefício</li></ul>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="cartao mt-3">
+            <p class="mb-0">
+                O novo plano começa em <strong th:text="${@fmt.data(inicioProximo)}">data</strong>
+                <span th:if="${inicioProximo.isAfter(hoje)}" class="text-secondary">(logo após o fim do plano atual, sem perder dias)</span>.
+            </p>
+            <div th:replace="~{fragments/layout :: pagamento(null)}"></div>
+            <button type="button" class="btn btn-link btn-sm px-0" data-cartao-teste>Preencher cartão de teste</button>
+            <div class="mt-2"><button class="btn btn-primary btn-lg" type="submit">Contratar plano</button></div>
+        </div>
+    </form>
+
+    <section class="cartao mt-3">
+        <h2 class="mb-2">Histórico de planos</h2>
+        <div th:if="${#lists.isEmpty(membro.assinaturas)}" class="text-secondary">Nenhum plano contratado.</div>
+        <div class="tabela-rolavel" th:unless="${#lists.isEmpty(membro.assinaturas)}">
+            <table class="table">
+                <thead><tr><th>Plano</th><th>Início</th><th>Fim</th><th class="num">Valor</th><th>Situação</th></tr></thead>
+                <tbody>
+                <tr th:each="a : ${membro.assinaturas}">
+                    <td th:text="${a.tipo.descricao}">VIP</td>
+                    <td th:text="${@fmt.data(a.inicio)}">data</td>
+                    <td th:text="${@fmt.data(a.fim)}">data</td>
+                    <td class="num" th:text="${@fmt.moeda(a.valorPago)}">R$</td>
+                    <td>
+                        <span th:if="${a.estaAtivaEm(hoje)}" class="selo selo-ok">Ativo</span>
+                        <span th:if="${a.isFutura(hoje)}" class="selo selo-info">Agendado</span>
+                        <span th:if="${a.fim.isBefore(hoje)}" class="selo selo-neutro">Encerrado</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

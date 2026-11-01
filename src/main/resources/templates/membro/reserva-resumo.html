@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Confirmar reserva')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Confirmar reserva</h1><p>Passo 2 de 2: confira os dados e pague.</p></div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <form th:action="@{/membro/reservas/confirmar}" th:object="${form}" method="post" class="row g-3" novalidate>
+        <input type="hidden" th:field="*{espacoId}">
+        <input type="hidden" th:field="*{data}">
+        <input type="hidden" th:field="*{inicio}">
+        <input type="hidden" th:field="*{fim}">
+        <input type="hidden" th:field="*{participantes}">
+        <div class="col-lg-5">
+            <section class="cartao">
+                <div class="rotulo">Resumo</div>
+                <h2 class="h4 mt-1" th:text="${espaco.nome}">Sala</h2>
+                <ul class="list-unstyled text-secondary mb-3">
+                    <li><i class="bi bi-calendar3"></i> <span th:text="${@fmt.diaSemana(form.data)}">data</span></li>
+                    <li><i class="bi bi-clock"></i> <span th:text="${form.inicio} + '–' + ${form.fim}">14:00</span></li>
+                    <li><i class="bi bi-people"></i> <span th:text="${form.participantes} + (${form.participantes} == 1 ? ' pessoa' : ' pessoas')">6</span></li>
+                </ul>
+                <div class="resumo-valores">
+                    <span>Valor base</span><span class="text-end" th:text="${@fmt.moeda(orcamento.valorBase)}">R$ 120,00</span>
+                    <th:block th:if="${orcamento.temDesconto()}">
+                        <span class="desconto" th:text="'Desconto VIP (' + ${orcamento.percentualDesconto} + '%)'">Desconto</span>
+                        <span class="desconto text-end" th:text="'- ' + ${@fmt.moeda(orcamento.desconto)}">- R$</span>
+                    </th:block>
+                    <span class="total">Total</span><span class="total text-end" th:text="${@fmt.moeda(orcamento.total)}">R$ 96,00</span>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-7">
+            <section class="cartao">
+                <div th:if="${orcamento.gratuito()}">
+                    <h2>Sem custo</h2>
+                    <p class="text-secondary">O uso das estações de trabalho já está incluído no seu plano.</p>
+                </div>
+                <div th:unless="${orcamento.gratuito()}">
+                    <div th:replace="~{fragments/layout :: pagamento(${orcamento.total})}"></div>
+                    <button type="button" class="btn btn-link btn-sm px-0" data-cartao-teste>Preencher cartão de teste</button>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-check2"></i> Confirmar reserva</button>
+                    <a class="btn btn-outline-secondary btn-lg"
+                       th:href="@{/membro/reservas/nova(espacoId=${form.espacoId},data=${form.data},hora=${form.inicio.hour})}">Alterar dados</a>
+                </div>
+            </section>
+        </div>
+    </form>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

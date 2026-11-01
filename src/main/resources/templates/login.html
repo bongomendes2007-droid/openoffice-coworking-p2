@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Entrar')}"></head>
+<body>
+<div class="tela-acesso">
+    <section class="acesso-lado">
+        <div>
+            <div class="marca text-white mb-5"><span class="marca-icone" style="background:#fff;color:#1f6f5c">OO</span> OpenOffice Coworking</div>
+            <h1>Salas, mesas e eventos num só lugar.</h1>
+            <p class="mt-3 mb-4" style="max-width:42ch">Reserve espaços, autorize visitantes, inscreva-se em workshops e acompanhe seus pagamentos.</p>
+            <ul class="lista-beneficios list-unstyled">
+                <li><i class="bi bi-check2-circle"></i> Sala de reunião R$ 60/h · Sala privada R$ 80/h · Auditório R$ 200/h</li>
+                <li><i class="bi bi-check2-circle"></i> VIP: 20% de desconto em salas e reservas com 30 dias de antecedência</li>
+                <li><i class="bi bi-check2-circle"></i> Planos a partir de R$ 50,00 por dia</li>
+            </ul>
+        </div>
+        <small class="opacity-75">Trabalho P2 · Programação Orientada a Objetos</small>
+    </section>
+    <section class="acesso-form">
+        <div class="caixa">
+            <h2 class="h3 mb-1">Entrar</h2>
+            <p class="text-secondary mb-4">Use seu e-mail e senha cadastrados.</p>
+            <div th:if="${param.saiu}" class="alert alert-info">Você saiu do sistema.</div>
+            <div th:if="${param.expirou}" class="alert alert-warning">Entre novamente para continuar.</div>
+            <div th:replace="~{fragments/layout :: alertas}"></div>
+            <form th:action="@{/login}" method="post" class="d-grid gap-3" novalidate>
+                <div>
+                    <label class="form-label" for="email">E-mail</label>
+                    <input class="form-control form-control-lg" type="email" id="email" name="email" th:value="${email}"
+                           autocomplete="username" required autofocus>
+                </div>
+                <div>
+                    <label class="form-label" for="senha">Senha</label>
+                    <input class="form-control form-control-lg" type="password" id="senha" name="senha"
+                           autocomplete="current-password" required>
+                </div>
+                <button class="btn btn-primary btn-lg" type="submit">Entrar</button>
+            </form>
+            <p class="mt-3 text-center">Ainda não é membro? <a th:href="@{/cadastro}">Crie sua conta</a></p>
+            <div class="contas-demo mt-4">
+                <strong>Contas de demonstração</strong>
+                <div class="mt-1">Administrador: <code>admin@openoffice.com</code> / <code>admin123</code></div>
+                <div>Membro VIP: <code>ana@email.com</code> / <code>123456</code></div>
+                <div>Membro Mensal: <code>bruno@email.com</code> / <code>123456</code></div>
+                <div>Plano vencido: <code>diego@email.com</code> / <code>123456</code></div>
+            </div>
+        </div>
+    </section>
+</div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

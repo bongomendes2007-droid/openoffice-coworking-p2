@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${evento.titulo})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <a class="small" th:href="@{/admin/eventos}"><i class="bi bi-arrow-left"></i> Eventos</a>
+    <div class="cabecalho mt-2">
+        <div>
+            <h1 th:text="${evento.titulo}">evento</h1>
+            <p th:text="${@fmt.dataHora(evento.inicio)} + ' às ' + ${@fmt.hora(evento.fim)} + ' · ' + ${evento.espacoNome}">data</p>
+        </div>
+        <div class="d-flex gap-1">
+            <span th:if="${evento.especial}" class="selo selo-vip">Especial</span>
+            <span class="selo" th:classappend="${evento.lotado} ? 'selo-erro' : 'selo-info'" th:text="${evento.vagasOcupadas} + '/' + ${evento.capacidade} + ' vagas'">vagas</span>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <div class="row g-3">
+        <div class="col-lg-4">
+            <section class="cartao">
+                <dl class="mb-0">
+                    <dt class="rotulo">Preço</dt><dd th:text="${evento.preco.signum() == 0} ? 'Gratuito' : ${@fmt.moeda(evento.preco)}">R$</dd>
+                    <dt class="rotulo">Abertura para todos</dt><dd th:text="${@fmt.dataHora(evento.aberturaGeral)}">data</dd>
+                    <dt class="rotulo">Reserva do espaço</dt><dd th:text="${evento.reservaId}">R</dd>
+                    <dt class="rotulo">Descrição</dt><dd th:text="${evento.descricao}">desc</dd>
+                </dl>
+            </section>
+            <section class="cartao">
+                <h2 class="mb-2">Lista de espera</h2>
+                <div th:if="${#maps.isEmpty(espera)}" class="small text-secondary">Ninguém na lista.</div>
+                <ol class="mb-0 small"><li th:each="p : ${espera}" th:text="${p.value}">nome</li></ol>
+            </section>
+        </div>
+        <div class="col-lg-8">
+            <section class="cartao">
+                <h2 class="mb-2">Inscrições</h2>
+                <div th:if="${#lists.isEmpty(evento.inscricoes)}" class="small text-secondary">Nenhuma inscrição.</div>
+                <div class="tabela-rolavel" th:unless="${#lists.isEmpty(evento.inscricoes)}">
+                    <table class="table">
+                        <thead><tr><th>Membro</th><th>Data</th><th class="num">Valor</th><th>Situação</th></tr></thead>
+                        <tbody>
+                        <tr th:each="i : ${evento.inscricoes}">
+                            <td><a th:href="@{/admin/membros/{id}(id=${i.membroId})}" th:text="${i.membroNome}">nome</a></td>
+                            <td th:text="${@fmt.dataHora(i.inscritoEm)}">data</td>
+                            <td class="num"><span th:text="${@fmt.moeda(i.valor)}">R$</span>
+                                <small th:if="${i.percentualDesconto > 0}" class="d-block text-success" th:text="'-' + ${i.percentualDesconto} + '% VIP'"></small></td>
+                            <td><span class="selo" th:classappend="${i.status.name() == 'CONFIRMADA'} ? 'selo-ok' : (${i.status.name() == 'CANCELADA'} ? 'selo-neutro' : 'selo-alerta')"
+                                      th:text="${i.status.descricao}">ok</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

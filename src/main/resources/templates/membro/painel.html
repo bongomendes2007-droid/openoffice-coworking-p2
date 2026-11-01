@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Painel')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div>
+            <h1>Olá, <span th:text="${membro.primeiroNome}">Ana</span>!</h1>
+            <p th:text="${@fmt.diaSemana(hoje)}">qua, 01/11</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a class="btn btn-primary" th:href="@{/membro/reservas/nova}"><i class="bi bi-plus-lg"></i> Nova reserva</a>
+            <a class="btn btn-outline-primary" th:href="@{/membro/agenda}"><i class="bi bi-calendar3"></i> Ver agenda</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <!-- Plano -->
+    <div class="cartao mb-3" th:classappend="${assinatura == null} ? 'border-danger'">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div th:if="${assinatura != null}">
+                <div class="rotulo">Seu plano</div>
+                <div class="d-flex align-items-center gap-2 mt-1">
+                    <span class="h4 m-0" th:text="${assinatura.tipo.descricao}">VIP</span>
+                    <span th:if="${vip}" class="selo selo-vip"><i class="bi bi-star-fill"></i> VIP</span>
+                </div>
+                <div class="text-secondary small mt-1">
+                    Válido até <strong th:text="${@fmt.data(membro.fimDaCobertura.get())}">13/11</strong>
+                    <span th:if="${diasParaVencer >= 0}" th:text="'(' + ${diasParaVencer} + (${diasParaVencer} == 1 ? ' dia' : ' dias') + ')'"></span>
+                </div>
+            </div>
+            <div th:if="${assinatura == null}">
+                <div class="rotulo text-danger">Sem plano ativo</div>
+                <div class="mt-1">Assine um plano para reservar espaços, autorizar visitantes e participar de eventos.</div>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <span th:if="${diasParaVencer >= 0 and diasParaVencer <= 5}" class="selo selo-alerta"><i class="bi bi-hourglass-split"></i> Vence em breve</span>
+                <a class="btn btn-sm" th:classappend="${assinatura == null} ? 'btn-danger' : 'btn-outline-primary'"
+                   th:href="@{/membro/plano}" th:text="${assinatura == null} ? 'Assinar plano' : 'Renovar'">Renovar</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-8 d-grid gap-3 align-content-start">
+            <section class="cartao">
+                <div class="cartao-titulo">
+                    <h2><i class="bi bi-bookmark-check text-verde"></i> Próximas reservas</h2>
+                    <a class="small" th:href="@{/membro/reservas}">Ver todas</a>
+                </div>
+                <div th:if="${#lists.isEmpty(proximasReservas)}" class="vazio">
+                    <i class="bi bi-calendar-x"></i>Nenhuma reserva futura. <a th:href="@{/membro/reservas/nova}">Reservar um espaço</a>
+                </div>
+                <div class="tabela-rolavel" th:unless="${#lists.isEmpty(proximasReservas)}">
+                    <table class="table">
+                        <thead><tr><th>Espaço</th><th>Data</th><th>Horário</th><th class="num">Valor</th></tr></thead>
+                        <tbody>
+                        <tr th:each="r : ${proximasReservas}">
+                            <td th:text="${r.espacoNome}">Sala</td>
+                            <td th:text="${@fmt.diaSemana(r.inicio.toLocalDate())}">qua</td>
+                            <td th:text="${@fmt.periodo(r.inicio, r.fim)}">14:00</td>
+                            <td class="num" th:text="${@fmt.moeda(r.valorTotal)}">R$</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="cartao">
+                <div class="cartao-titulo">
+                    <h2><i class="bi bi-calendar-event text-verde"></i> Meus eventos</h2>
+                    <a class="small" th:href="@{/membro/eventos}">Ver eventos</a>
+                </div>
+                <div th:if="${#lists.isEmpty(meusEventos)}" class="vazio"><i class="bi bi-calendar2"></i>Você não está inscrito em eventos.</div>
+                <ul class="list-unstyled m-0" th:unless="${#lists.isEmpty(meusEventos)}">
+                    <li th:each="e : ${meusEventos}" class="d-flex justify-content-between gap-2 py-2 border-bottom">
+                        <a th:href="@{/membro/eventos/{id}(id=${e.id})}" th:text="${e.titulo}">Evento</a>
+                        <span class="small text-secondary text-nowrap" th:text="${@fmt.dataHora(e.inicio)}">data</span>
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="col-lg-4 d-grid gap-3 align-content-start">
+            <section class="cartao">
+                <div class="cartao-titulo">
+                    <h2><i class="bi bi-person-badge text-verde"></i> Visitantes agora</h2>
+                    <span class="selo selo-info" th:text="${#lists.size(visitantesAtivos)} + ' de 3'">1 de 3</span>
+                </div>
+                <div th:if="${#lists.isEmpty(visitantesAtivos)}" class="text-secondary small">Nenhum visitante no espaço.</div>
+                <ul class="list-unstyled m-0 small">
+                    <li th:each="v : ${visitantesAtivos}" class="py-1">
+                        <i class="bi bi-person"></i> <span th:text="${v.visitanteNome}">Carlos</span>
+                        <span class="text-secondary" th:text="'desde ' + ${@fmt.hora(v.entrada)}"></span>
+                    </li>
+                </ul>
+                <a class="btn btn-sm btn-outline-primary mt-2" th:href="@{/membro/visitantes}">Gerenciar visitantes</a>
+            </section>
+
+            <section class="cartao" th:if="${!#lists.isEmpty(pendencias)}">
+                <h2 class="mb-2"><i class="bi bi-exclamation-circle text-danger"></i> Pendências</h2>
+                <div th:each="c : ${pendencias}" class="d-flex justify-content-between gap-2 small py-1">
+                    <span th:text="${c.descricao}">desc</span>
+                    <a class="text-nowrap" th:href="@{/membro/pagamentos/{id}/pagar(id=${c.id})}" th:text="'Pagar ' + ${@fmt.moeda(c.valor)}">Pagar</a>
+                </div>
+            </section>
+
+            <section class="cartao" id="avisos">
+                <div class="cartao-titulo">
+                    <h2><i class="bi bi-bell text-verde"></i> Avisos</h2>
+                    <form th:if="${avisosNaoLidos > 0}" th:action="@{/membro/avisos/lidos}" method="post" class="m-0">
+                        <button class="btn btn-link btn-sm p-0" type="submit">Marcar como lidos</button>
+                    </form>
+                </div>
+                <div th:if="${#lists.isEmpty(notificacoes)}" class="text-secondary small">Nenhum aviso.</div>
+                <div th:each="n : ${notificacoes}" class="aviso" th:classappend="${!n.lida} ? 'nao-lido'">
+                    <i class="bi" th:classappend="${n.lida} ? 'bi-envelope-open text-secondary' : 'bi-envelope-fill text-verde'"></i>
+                    <div><span th:text="${n.mensagem}">msg</span><small th:text="${@fmt.dataHora(n.criadaEm)}">data</small></div>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

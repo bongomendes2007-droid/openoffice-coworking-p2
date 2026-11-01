@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cancelar inscrição')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina" style="max-width: 720px">
+    <h1 class="mb-3">Cancelar inscrição</h1>
+    <div class="cartao">
+        <p class="mb-3" th:text="${evento.titulo} + ' · ' + ${@fmt.dataHora(evento.inicio)}">evento</p>
+        <div th:if="${previa.multa.signum() > 0}" class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i> Faltam <strong th:text="${previa.horasAteInicio} + 'h'">h</strong>
+            para o evento (menos de 24h). Será retida multa de 50% do valor pago.
+        </div>
+        <div class="resumo-valores mb-3" style="max-width: 360px">
+            <span>Valor pago</span><span class="text-end" th:text="${@fmt.moeda(previa.valorPago)}">R$</span>
+            <span class="text-danger">Multa</span><span class="text-end text-danger" th:text="${@fmt.moeda(previa.multa)}">R$</span>
+            <span class="total">Reembolso</span><span class="total text-end" th:text="${@fmt.moeda(previa.reembolso)}">R$</span>
+        </div>
+        <p class="small text-secondary">Sua vaga será oferecida ao primeiro da lista de espera.</p>
+        <form th:action="@{/membro/eventos/{id}/cancelar(id=${evento.id})}" method="post" class="d-flex gap-2">
+            <button class="btn btn-danger" type="submit">Confirmar cancelamento</button>
+            <a class="btn btn-outline-secondary" th:href="@{/membro/eventos/{id}(id=${evento.id})}">Voltar</a>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

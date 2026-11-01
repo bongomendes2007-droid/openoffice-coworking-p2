@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Membros')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Membros</h1><p th:text="${#lists.size(membros)} + ' membro(s)'">6 membros</p></div>
+        <div class="d-flex gap-2 flex-wrap">
+            <form class="d-flex gap-2" th:action="@{/admin/membros}" method="get">
+                <input class="form-control" type="search" name="busca" th:value="${busca}" placeholder="Nome, e-mail ou CPF" aria-label="Buscar membro">
+                <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+            <a class="btn btn-primary" th:href="@{/admin/membros/novo}"><i class="bi bi-person-plus"></i> Novo membro</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <section class="cartao">
+        <div th:if="${#lists.isEmpty(membros)}" class="vazio"><i class="bi bi-people"></i>Nenhum membro encontrado.</div>
+        <div class="tabela-rolavel" th:unless="${#lists.isEmpty(membros)}">
+            <table class="table">
+                <thead><tr><th>Nome</th><th>E-mail</th><th>CPF</th><th>Plano</th><th>Válido até</th><th>Conta</th></tr></thead>
+                <tbody>
+                <tr th:each="m : ${membros}" th:with="plano=${m.getPlanoAtual(hojeData).orElse(null)}">
+                    <td><a th:href="@{/admin/membros/{id}(id=${m.id})}" th:text="${m.nome}">nome</a></td>
+                    <td th:text="${m.email}">email</td>
+                    <td class="text-nowrap" th:text="${m.documento}">cpf</td>
+                    <td>
+                        <span th:if="${plano != null}" class="selo" th:classappend="${plano.vip} ? 'selo-vip' : 'selo-ok'" th:text="${plano.descricao}">VIP</span>
+                        <span th:if="${plano == null}" class="selo selo-erro">Sem plano</span>
+                    </td>
+                    <td th:text="${m.fimDaCobertura.isPresent()} ? ${@fmt.data(m.fimDaCobertura.get())} : '-'">data</td>
+                    <td><span class="selo" th:classappend="${m.ativo} ? 'selo-ok' : 'selo-neutro'" th:text="${m.ativo} ? 'Ativa' : 'Desativada'">Ativa</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

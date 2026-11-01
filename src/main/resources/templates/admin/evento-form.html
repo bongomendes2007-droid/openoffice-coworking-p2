@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Novo evento')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina" style="max-width: 820px">
+    <a class="small" th:href="@{/admin/eventos}"><i class="bi bi-arrow-left"></i> Eventos</a>
+    <h1 class="mt-2 mb-3">Novo evento</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <form class="cartao d-grid gap-3" th:action="@{/admin/eventos/novo}" th:object="${form}" method="post" novalidate>
+        <div>
+            <label class="form-label" for="titulo">Título</label>
+            <input class="form-control" th:field="*{titulo}" th:errorclass="is-invalid">
+            <div class="invalid-feedback" th:errors="*{titulo}"></div>
+        </div>
+        <div>
+            <label class="form-label" for="descricao">Descrição</label>
+            <textarea class="form-control" rows="2" th:field="*{descricao}" th:errorclass="is-invalid"></textarea>
+            <div class="invalid-feedback" th:errors="*{descricao}"></div>
+        </div>
+        <div>
+            <label class="form-label" for="espacoId">Espaço</label>
+            <select class="form-select" th:field="*{espacoId}" th:errorclass="is-invalid">
+                <option value="">Escolha...</option>
+                <option th:each="e : ${espacos}" th:value="${e.id}" th:text="${e.nome} + ' (até ' + ${e.capacidade} + ' pessoas)'">sala</option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{espacoId}"></div>
+            <div class="form-text">O espaço fica reservado para o evento. Não pode haver outra reserva no mesmo horário.</div>
+        </div>
+        <div class="row g-2">
+            <div class="col-sm-4">
+                <label class="form-label" for="data">Data</label>
+                <input class="form-control" type="date" th:field="*{data}" th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{data}"></div>
+            </div>
+            <div class="col-6 col-sm-4">
+                <label class="form-label" for="inicio">Início</label>
+                <input class="form-control" type="time" th:field="*{inicio}" th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{inicio}"></div>
+            </div>
+            <div class="col-6 col-sm-4">
+                <label class="form-label" for="fim">Fim</label>
+                <input class="form-control" type="time" th:field="*{fim}" th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{fim}"></div>
+            </div>
+        </div>
+        <div class="row g-2">
+            <div class="col-sm-4">
+                <label class="form-label" for="capacidade">Vagas</label>
+                <input class="form-control" type="number" min="1" th:field="*{capacidade}" th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{capacidade}"></div>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label" for="preco">Preço (R$)</label>
+                <input class="form-control" type="number" min="0" step="0.01" th:field="*{preco}" th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{preco}"></div>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label" for="diasPrioridadeVip">Pré-venda VIP (dias)</label>
+                <input class="form-control" type="number" min="0" max="30" th:field="*{diasPrioridadeVip}" th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{diasPrioridadeVip}"></div>
+            </div>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" th:field="*{especial}">
+            <label class="form-check-label" for="especial1">Evento especial (VIP tem 15% de desconto)</label>
+        </div>
+        <div><button class="btn btn-primary" type="submit">Criar evento</button></div>
+    </form>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

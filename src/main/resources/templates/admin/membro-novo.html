@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Novo membro')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina" style="max-width: 720px">
+    <a class="small" th:href="@{/admin/membros}"><i class="bi bi-arrow-left"></i> Membros</a>
+    <h1 class="mt-2 mb-3">Novo membro</h1>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <form class="cartao d-grid gap-3" th:action="@{/admin/membros/novo}" th:object="${form}" method="post" novalidate>
+        <div th:replace="~{fragments/campos-membro :: campos}"></div>
+        <div class="row g-2">
+            <div class="col-sm-6">
+                <label class="form-label" for="senha">Senha inicial</label>
+                <input class="form-control" type="password" th:field="*{senha}" th:errorclass="is-invalid" autocomplete="new-password">
+                <div class="invalid-feedback" th:errors="*{senha}"></div>
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label" for="confirmacaoSenha">Confirme a senha</label>
+                <input class="form-control" type="password" th:field="*{confirmacaoSenha}"
+                       th:classappend="${#fields.hasErrors('senhasIguais')} ? 'is-invalid'" autocomplete="new-password">
+                <div class="invalid-feedback" th:errors="*{senhasIguais}"></div>
+            </div>
+        </div>
+        <div><button class="btn btn-primary" type="submit">Cadastrar membro</button></div>
+    </form>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

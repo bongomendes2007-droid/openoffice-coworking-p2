@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Agenda')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div>
+            <h1>Agenda de ocupação</h1>
+            <p>Clique num horário livre para reservar.</p>
+        </div>
+        <form class="d-flex gap-2 align-items-center" th:action="@{/membro/agenda}" method="get">
+            <a class="btn btn-outline-secondary" th:href="@{/membro/agenda(data=${anterior})}" aria-label="Dia anterior"><i class="bi bi-chevron-left"></i></a>
+            <input class="form-control" type="date" name="data" th:value="${agenda.data}" onchange="this.form.submit()" aria-label="Data">
+            <a class="btn btn-outline-secondary" th:href="@{/membro/agenda(data=${seguinte})}" aria-label="Dia seguinte"><i class="bi bi-chevron-right"></i></a>
+            <a class="btn btn-outline-primary text-nowrap" th:href="@{/membro/agenda}">Hoje</a>
+        </form>
+    </div>
+    <div class="cartao">
+        <h2 class="mb-3" th:text="${@fmt.diaSemana(agenda.data)}">qua, 01/11</h2>
+        <div th:replace="~{fragments/layout :: agenda(${agenda}, true)}"></div>
+        <div class="legenda mt-3">
+            <span class="l-livre">Livre</span><span class="l-minha">Sua reserva</span>
+            <span class="l-ocupado">Reservado</span><span class="l-evento">Evento</span><span class="l-passado">Encerrado</span>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

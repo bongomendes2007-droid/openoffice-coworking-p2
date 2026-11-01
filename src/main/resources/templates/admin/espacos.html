@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Espaços')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Espaços</h1><p>Preços por hora definidos pelo coworking para cada tipo de espaço.</p></div>
+        <a class="btn btn-primary" th:href="@{/admin/espacos/novo}"><i class="bi bi-plus-lg"></i> Novo espaço</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <section class="cartao">
+        <div class="tabela-rolavel">
+            <table class="table">
+                <thead><tr><th>Nome</th><th>Tipo</th><th class="num">Capacidade</th><th class="num">Preço/hora</th><th>Regras</th><th>Situação</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="e : ${espacos}" th:classappend="${!e.ativo} ? 'text-secondary'">
+                    <td><strong th:text="${e.nome}">nome</strong><small class="d-block text-secondary" th:text="${e.descricao}">desc</small></td>
+                    <td th:text="${e.tipo.descricao}">tipo</td>
+                    <td class="num" th:text="${e.capacidade}">8</td>
+                    <td class="num" th:text="${e.precoHora.signum() == 0} ? 'Incluído no plano' : ${@fmt.moeda(e.precoHora)}">R$</td>
+                    <td class="small">
+                        <span th:if="${e.exclusivoVip}" class="selo selo-vip">Só VIP</span>
+                        <span th:if="${e.descontoVip > 0}" class="selo selo-info" th:text="'VIP -' + ${e.descontoVip} + '%'">VIP</span>
+                        <span th:if="${e.aceitaEventos()}" class="selo selo-neutro">Eventos</span>
+                    </td>
+                    <td><span class="selo" th:classappend="${e.ativo} ? 'selo-ok' : 'selo-neutro'" th:text="${e.ativo} ? 'Ativo' : 'Desativado'">Ativo</span></td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/espacos/{id}/editar(id=${e.id})}">Editar</a>
+                        <form class="d-inline" th:action="@{/admin/espacos/{id}/ativo(id=${e.id})}" method="post"
+                              th:attr="data-confirmar=${e.ativo} ? 'Desativar este espaço para novas reservas?' : 'Ativar este espaço?'">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit" th:text="${e.ativo} ? 'Desativar' : 'Ativar'">Desativar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

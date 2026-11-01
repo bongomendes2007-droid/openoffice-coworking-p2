@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nova reserva')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div>
+            <h1>Nova reserva</h1>
+            <p>Passo 1 de 2: escolha o espaço e o horário.</p>
+        </div>
+        <a class="btn btn-outline-secondary" th:href="@{/membro/agenda(data=${form.data})}"><i class="bi bi-calendar3"></i> Ver ocupação do dia</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <div th:if="${!temPlano}" class="alert alert-warning">
+        Você não tem um plano ativo. <a th:href="@{/membro/plano}">Assine um plano</a> para poder reservar.
+    </div>
+
+    <form th:action="@{/membro/reservas/resumo}" th:object="${form}" method="post" novalidate>
+        <div class="row g-3">
+            <div class="col-lg-7">
+                <section class="cartao">
+                    <h2 class="mb-3">Espaço</h2>
+                    <div class="invalid-feedback d-block mb-2" th:if="${#fields.hasErrors('espacoId')}" th:errors="*{espacoId}"></div>
+                    <div class="d-grid gap-2">
+                        <label th:each="e : ${espacos}" class="d-flex gap-3 align-items-start border rounded p-2"
+                               th:classappend="${e.exclusivoVip and !vip} ? 'opacity-50'">
+                            <input class="form-check-input mt-1" type="radio" th:field="*{espacoId}" th:value="${e.id}">
+                            <span class="flex-grow-1">
+                                <strong th:text="${e.nome}">Sala</strong>
+                                <span th:if="${e.exclusivoVip}" class="selo selo-vip ms-1">Só VIP</span>
+                                <small class="d-block text-secondary" th:text="${e.tipo.descricao} + ' · até ' + ${e.capacidade} + (${e.capacidade} == 1 ? ' pessoa' : ' pessoas') + ' · ' + ${e.descricao}">desc</small>
+                            </span>
+                            <span class="text-end text-nowrap">
+                                <strong th:text="${e.precoHora.signum() == 0} ? 'Incluído' : ${@fmt.moeda(e.precoHora)} + '/h'">R$ 60/h</strong>
+                                <small th:if="${e.descontoVip > 0}" class="d-block" th:classappend="${vip} ? 'text-success' : 'text-secondary'"
+                                       th:text="'VIP -' + ${e.descontoVip} + '%'">VIP -20%</small>
+                            </span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+            <div class="col-lg-5">
+                <section class="cartao">
+                    <h2 class="mb-3">Data e horário</h2>
+                    <div class="d-grid gap-3">
+                        <div>
+                            <label class="form-label" for="data">Data</label>
+                            <input class="form-control" type="date" th:field="*{data}" th:errorclass="is-invalid"
+                                   th:attr="min=${hoje},max=${limiteData}">
+                            <div class="invalid-feedback" th:errors="*{data}"></div>
+                            <div class="form-text" th:text="'Seu plano permite reservar até ' + ${@fmt.data(limiteData)} + '.'">até</div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label" for="inicio">Início</label>
+                                <input class="form-control" type="time" step="1800" th:field="*{inicio}" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{inicio}"></div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label" for="fim">Fim</label>
+                                <input class="form-control" type="time" step="1800" th:field="*{fim}" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{fim}"></div>
+                            </div>
+                        </div>
+                        <div class="form-text mt-n2">Funcionamento das 08:00 às 22:00, em blocos de 30 minutos.</div>
+                        <div>
+                            <label class="form-label" for="participantes">Número de participantes</label>
+                            <input class="form-control" type="number" min="1" th:field="*{participantes}" th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:errors="*{participantes}"></div>
+                        </div>
+                        <button class="btn btn-primary btn-lg" type="submit">Continuar <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </form>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

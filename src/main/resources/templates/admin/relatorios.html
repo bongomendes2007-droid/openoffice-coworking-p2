@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Relatórios')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho"><div><h1>Relatórios</h1><p>Escolha o relatório e o período. É possível baixar em PDF ou CSV.</p></div></div>
+
+    <ul class="nav nav-pills mb-3 gap-1 flex-wrap">
+        <li class="nav-item" th:each="t : ${tipos}">
+            <a class="nav-link" th:classappend="${t == tipo} ? 'active' : 'text-reset'"
+               th:href="@{/admin/relatorios(tipo=${t.codigo},de=${de},ate=${ate})}">
+                <i class="bi" th:classappend="${t.icone}"></i> <span th:text="${t.descricao}">tipo</span></a>
+        </li>
+    </ul>
+
+    <form class="cartao d-flex flex-wrap gap-2 align-items-end mb-3" th:action="@{/admin/relatorios}" method="get">
+        <input type="hidden" name="tipo" th:value="${tipo.codigo}">
+        <div><label class="form-label small" for="de">De</label><input class="form-control" type="date" id="de" name="de" th:value="${de}"></div>
+        <div><label class="form-label small" for="ate">Até</label><input class="form-control" type="date" id="ate" name="ate" th:value="${ate}"></div>
+        <button class="btn btn-primary" type="submit"><i class="bi bi-arrow-repeat"></i> Gerar</button>
+        <div class="ms-auto d-flex gap-2" th:if="${relatorio != null}">
+            <a class="btn btn-outline-danger" th:href="@{/admin/relatorios/exportar(tipo=${tipo.codigo},de=${de},ate=${ate},formato='pdf')}"><i class="bi bi-filetype-pdf"></i> Baixar PDF</a>
+            <a class="btn btn-outline-success" th:href="@{/admin/relatorios/exportar(tipo=${tipo.codigo},de=${de},ate=${ate},formato='csv')}"><i class="bi bi-filetype-csv"></i> Baixar CSV</a>
+        </div>
+    </form>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <th:block th:if="${relatorio != null}">
+        <div class="row g-3 mb-3">
+            <div class="col-lg-8" th:if="${relatorio.grafico != null}">
+                <section class="cartao h-100">
+                    <h2 class="mb-2" th:text="${relatorio.grafico.titulo}">gráfico</h2>
+                    <div class="grafico-caixa"><canvas id="grafico" aria-label="Gráfico do relatório" role="img"></canvas></div>
+                </section>
+            </div>
+            <div class="col-lg-4">
+                <section class="cartao h-100">
+                    <h2 class="mb-2">Resumo</h2>
+                    <div th:each="item : ${relatorio.resumo}" class="d-flex justify-content-between gap-2 py-1 border-bottom small">
+                        <span class="text-secondary" th:text="${item.key}">rótulo</span><strong class="text-end" th:text="${item.value}">valor</strong>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <section class="cartao">
+            <h2 th:text="${relatorio.titulo}">título</h2>
+            <p class="text-secondary small" th:text="${relatorio.subtitulo}">subtítulo</p>
+            <div th:if="${relatorio.vazio}" class="vazio"><i class="bi bi-inbox"></i>Nenhum registro no período.</div>
+            <div class="tabela-rolavel" th:unless="${relatorio.vazio}" style="max-height: 560px">
+                <table class="table table-sm" th:classappend="${relatorio.mapaDeCalor} ? 'calor'">
+                    <thead><tr><th th:each="c : ${relatorio.colunas}" th:text="${c}">col</th></tr></thead>
+                    <tbody>
+                    <tr th:each="linha : ${relatorio.linhas}">
+                        <td th:each="v, st : ${linha}" th:text="${v}"
+                            th:attr="data-v=${relatorio.mapaDeCalor and st.index > 0 and !st.last} ? ${v} : null">v</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </th:block>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+<script th:src="@{/webjars/chart.js/4.4.1/dist/chart.umd.js}"></script>
+<script th:inline="javascript">
+    const dados = /*[[${relatorio != null ? relatorio.grafico : null}]]*/ null;
+    if (dados && document.getElementById('grafico')) {
+        new Chart(document.getElementById('grafico'), {
+            type: 'bar',
+            data: {
+                labels: dados.rotulos,
+                datasets: [{ label: dados.titulo, data: dados.valores, backgroundColor: '#1f6f5c', borderRadius: 4, maxBarThickness: 48 }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: c => dados.unidade === 'R$'
+                        ? c.parsed.y.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : c.parsed.y + (dados.unidade || '') } }
+                },
+                scales: { y: { beginAtZero: true, grid: { color: '#e6ebe7' } }, x: { grid: { display: false } } }
+            }
+        });
+    }
+</script>
+</body>
+</html>

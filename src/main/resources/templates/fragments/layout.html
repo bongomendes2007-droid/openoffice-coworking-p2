@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' · OpenOffice Coworking'">OpenOffice Coworking</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f6f5c'/%3E%3Ctext x='16' y='22' font-size='16' font-family='Arial' font-weight='700' fill='white' text-anchor='middle'%3EOO%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+
+<!-- Barra de navegação: os links mudam conforme o perfil (membro ou administrador) -->
+<nav th:fragment="menu" class="navbar navbar-expand-xl barra">
+    <div class="container-xl">
+        <a class="navbar-brand marca" th:href="@{/}">
+            <span class="marca-icone">OO</span> OpenOffice <small>Coworking</small>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+                aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="menuPrincipal" th:if="${usuarioLogado != null}">
+            <ul class="navbar-nav me-auto" th:if="${usuarioLogado.perfil.name() == 'MEMBRO'}">
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/membro/painel')} ? 'active'" th:href="@{/membro/painel}"><i class="bi bi-house"></i> Painel</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/membro/agenda')} ? 'active'" th:href="@{/membro/agenda}"><i class="bi bi-calendar3"></i> Agenda</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/membro/reservas')} ? 'active'" th:href="@{/membro/reservas}"><i class="bi bi-bookmark-check"></i> Reservas</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/membro/plano')} ? 'active'" th:href="@{/membro/plano}"><i class="bi bi-star"></i> Meu plano</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/membro/visitantes')} ? 'active'" th:href="@{/membro/visitantes}"><i class="bi bi-person-badge"></i> Visitantes</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/membro/eventos')} ? 'active'" th:href="@{/membro/eventos}"><i class="bi bi-calendar-event"></i> Eventos</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/membro/pagamentos')} ? 'active'" th:href="@{/membro/pagamentos}"><i class="bi bi-wallet2"></i> Pagamentos</a></li>
+            </ul>
+            <ul class="navbar-nav me-auto" th:if="${usuarioLogado.perfil.name() == 'ADMIN'}">
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/admin/painel')} ? 'active'" th:href="@{/admin/painel}"><i class="bi bi-speedometer2"></i> Painel</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/admin/membros')} ? 'active'" th:href="@{/admin/membros}"><i class="bi bi-people"></i> Membros</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/admin/espacos')} ? 'active'" th:href="@{/admin/espacos}"><i class="bi bi-door-open"></i> Espaços</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/admin/reservas')} ? 'active'" th:href="@{/admin/reservas}"><i class="bi bi-bookmark-check"></i> Reservas</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/admin/eventos')} ? 'active'" th:href="@{/admin/eventos}"><i class="bi bi-calendar-event"></i> Eventos</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/admin/visitas')} ? 'active'" th:href="@{/admin/visitas}"><i class="bi bi-person-badge"></i> Visitas</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/admin/relatorios')} ? 'active'" th:href="@{/admin/relatorios}"><i class="bi bi-bar-chart"></i> Relatórios</a></li>
+                <li class="nav-item"><a class="nav-link" th:classappend="${#strings.startsWith(paginaAtual,'/admin/sistema')} ? 'active'" th:href="@{/admin/sistema}"><i class="bi bi-gear"></i> Sistema</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2 usuario-menu">
+                <a th:if="${usuarioLogado.perfil.name() == 'MEMBRO'}" th:href="@{/membro/painel} + '#avisos'"
+                   class="btn btn-sm btn-link text-reset position-relative" title="Avisos">
+                    <i class="bi bi-bell"></i>
+                    <span th:if="${avisosNaoLidos > 0}" class="badge rounded-pill bg-danger contador" th:text="${avisosNaoLidos}">1</span>
+                </a>
+                <a th:href="${usuarioLogado.perfil.name() == 'MEMBRO'} ? @{/membro/perfil} : @{/admin/sistema}"
+                   class="small text-reset text-decoration-none">
+                    <i class="bi bi-person-circle"></i> <span th:text="${usuarioLogado.primeiroNome}">Ana</span>
+                </a>
+                <form th:action="@{/sair}" method="post" class="m-0">
+                    <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-box-arrow-right"></i> Sair</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mensagens de sucesso e erro -->
+<div th:fragment="alertas">
+    <div th:if="${sucesso}" class="alert alert-success d-flex gap-2 align-items-start" role="status">
+        <i class="bi bi-check-circle-fill"></i><div th:text="${sucesso}">Ok</div>
+    </div>
+    <div th:if="${erro}" class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+        <i class="bi bi-exclamation-octagon-fill"></i><div th:text="${erro}">Erro</div>
+    </div>
+</div>
+
+<!-- Campos de pagamento (usados em reservas, planos, eventos e cobranças) -->
+<div th:fragment="pagamento(valor)" class="pagamento">
+    <h3 class="h6 mb-2">Forma de pagamento</h3>
+    <div class="formas" role="radiogroup">
+        <label class="forma"><input type="radio" th:field="*{pagamento.forma}" value="PIX">
+            <span><i class="bi bi-qr-code"></i> PIX</span></label>
+        <label class="forma"><input type="radio" th:field="*{pagamento.forma}" value="CARTAO">
+            <span><i class="bi bi-credit-card"></i> Cartão</span></label>
+        <label class="forma"><input type="radio" th:field="*{pagamento.forma}" value="BOLETO">
+            <span><i class="bi bi-upc"></i> Boleto</span></label>
+    </div>
+    <div class="dados-cartao mt-3">
+        <div class="row g-2">
+            <div class="col-12">
+                <label class="form-label small" for="pagamento.titular">Nome impresso no cartão</label>
+                <input class="form-control" th:field="*{pagamento.titular}" autocomplete="cc-name">
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label small" for="pagamento.numeroCartao">Número do cartão</label>
+                <input class="form-control" th:field="*{pagamento.numeroCartao}" inputmode="numeric"
+                       autocomplete="cc-number" placeholder="4242 4242 4242 4242">
+            </div>
+            <div class="col-4 col-md-2">
+                <label class="form-label small" for="pagamento.validade">Validade</label>
+                <input class="form-control" th:field="*{pagamento.validade}" placeholder="MM/AA" autocomplete="cc-exp">
+            </div>
+            <div class="col-4 col-md-2">
+                <label class="form-label small" for="pagamento.cvv">CVV</label>
+                <input class="form-control" th:field="*{pagamento.cvv}" inputmode="numeric" autocomplete="cc-csc">
+            </div>
+            <div class="col-4 col-md-2">
+                <label class="form-label small" for="pagamento.parcelas">Parcelas</label>
+                <select class="form-select" th:field="*{pagamento.parcelas}">
+                    <option th:each="p : ${#numbers.sequence(1, 6)}" th:value="${p}" th:text="${p} + 'x'">1x</option>
+                </select>
+            </div>
+        </div>
+        <p class="form-text mb-0">Pagamento simulado. Para testar, use o cartão 4242 4242 4242 4242 com qualquer validade futura.</p>
+    </div>
+    <p class="form-text dica-pix mb-0">O código PIX é gerado na confirmação (simulado, aprovação imediata).</p>
+    <p class="form-text dica-boleto mb-0">O boleto é gerado na confirmação (simulado, compensação imediata).</p>
+</div>
+
+<!-- Grade de ocupação do dia -->
+<div th:fragment="agenda(agenda, linkavel)" class="tabela-rolavel">
+    <table class="agenda">
+        <thead>
+        <tr>
+            <th class="agenda-espaco">Espaço</th>
+            <th th:each="h : ${agenda.horas}" th:text="${h} + 'h'">8h</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="linha : ${agenda.linhas}">
+            <th class="agenda-espaco">
+                <span th:text="${linha.espaco.nome}">Sala</span>
+                <small class="d-block text-secondary" th:text="${linha.espaco.tipo.descricao} + ' · ' + ${linha.espaco.capacidade} + (${linha.espaco.capacidade} == 1 ? ' lugar' : ' lugares')">tipo</small>
+            </th>
+            <td th:each="c : ${linha.celulas}" th:class="'celula ' + ${c.estado}" th:title="${c.rotulo}">
+                <a th:if="${linkavel and c.livre}" class="celula-link"
+                   th:href="@{/membro/reservas/nova(espacoId=${linha.espaco.id},data=${agenda.data},hora=${c.hora})}"
+                   th:attr="aria-label='Reservar ' + ${linha.espaco.nome} + ' às ' + ${c.hora} + 'h'"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:fragment="rodape" class="rodape">
+    <div class="container-xl d-flex flex-wrap justify-content-between gap-2">
+        <span>OpenOffice Coworking · Trabalho P2 de Programação Orientada a Objetos</span>
+        <span th:text="'Hoje: ' + ${@fmt.data(hoje)}">Hoje</span>
+    </div>
+</footer>
+
+<div th:fragment="scripts">
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/app.js}"></script>
+</div>
+</body>
+</html>

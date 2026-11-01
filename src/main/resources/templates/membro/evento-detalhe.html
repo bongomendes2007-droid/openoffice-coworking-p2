@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${evento.titulo})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <a class="small" th:href="@{/membro/eventos}"><i class="bi bi-arrow-left"></i> Todos os eventos</a>
+    <div class="cabecalho mt-2">
+        <div>
+            <div class="d-flex gap-1 mb-1">
+                <span th:if="${evento.especial}" class="selo selo-vip"><i class="bi bi-stars"></i> Evento especial</span>
+                <span th:if="${evento.lotado}" class="selo selo-erro">Lotado</span>
+            </div>
+            <h1 th:text="${evento.titulo}">Evento</h1>
+            <p th:text="${evento.descricao}">descrição</p>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <div class="row g-3">
+        <div class="col-lg-5">
+            <section class="cartao">
+                <dl class="row mb-0">
+                    <dt class="col-5 rotulo">Data</dt><dd class="col-7" th:text="${@fmt.diaSemana(evento.inicio.toLocalDate())}">data</dd>
+                    <dt class="col-5 rotulo">Horário</dt><dd class="col-7" th:text="${@fmt.periodo(evento.inicio, evento.fim)}">h</dd>
+                    <dt class="col-5 rotulo">Local</dt><dd class="col-7" th:text="${evento.espacoNome}">local</dd>
+                    <dt class="col-5 rotulo">Vagas</dt><dd class="col-7" th:text="${evento.vagasRestantes} + ' de ' + ${evento.capacidade} + ' disponíveis'">vagas</dd>
+                    <dt class="col-5 rotulo">Lista de espera</dt><dd class="col-7" th:text="${#lists.size(evento.listaEspera)} + ' pessoa(s)'">0</dd>
+                    <dt class="col-5 rotulo">Abertura geral</dt>
+                    <dd class="col-7"><span th:text="${@fmt.dataHora(evento.aberturaGeral)}">data</span>
+                        <small class="d-block text-secondary" th:if="${!evento.isAbertoParaTodos(agora)}">Até lá, só membros VIP podem se inscrever.</small></dd>
+                </dl>
+            </section>
+        </div>
+        <div class="col-lg-7">
+            <!-- Já inscrito -->
+            <section class="cartao" th:if="${minhaInscricao != null}">
+                <h2><i class="bi bi-check-circle text-success"></i> Você está inscrito</h2>
+                <p class="mb-2">
+                    Situação: <span class="selo" th:classappend="${minhaInscricao.status.name() == 'CONFIRMADA'} ? 'selo-ok' : 'selo-alerta'"
+                                    th:text="${minhaInscricao.status.descricao}">ok</span>
+                    · Valor: <strong th:text="${@fmt.moeda(minhaInscricao.valor)}">R$</strong>
+                </p>
+                <p th:if="${minhaInscricao.status.name() == 'AGUARDANDO_PAGAMENTO'}">
+                    Uma vaga foi liberada para você. <a th:href="@{/membro/pagamentos}">Pague a inscrição</a> para confirmar.
+                </p>
+                <a th:if="${!evento.isInscricoesEncerradas(agora)}" class="btn btn-outline-danger btn-sm"
+                   th:href="@{/membro/eventos/{id}/cancelar(id=${evento.id})}">Cancelar inscrição</a>
+            </section>
+
+            <!-- Na lista de espera -->
+            <section class="cartao" th:if="${minhaInscricao == null and posicaoEspera > 0}">
+                <h2><i class="bi bi-hourglass-split text-warning"></i> Você está na lista de espera</h2>
+                <p>Posição: <strong th:text="${posicaoEspera} + 'º'">1º</strong>. Se alguém cancelar, a vaga é sua e você recebe um aviso no painel.</p>
+                <form th:action="@{/membro/eventos/{id}/sair-espera(id=${evento.id})}" method="post">
+                    <button class="btn btn-outline-secondary btn-sm" type="submit">Sair da lista de espera</button>
+                </form>
+            </section>
+
+            <!-- Pode se inscrever -->
+            <section class="cartao" th:if="${minhaInscricao == null and posicaoEspera == 0}">
+                <h2 class="mb-3">Inscrição</h2>
+                <div th:if="${evento.isInscricoesEncerradas(agora)}" class="alert alert-secondary mb-0">As inscrições foram encerradas.</div>
+                <th:block th:unless="${evento.isInscricoesEncerradas(agora)}">
+                    <div th:if="${!vip and !evento.isAbertoParaTodos(agora)}" class="alert alert-info">
+                        <i class="bi bi-lock"></i> Pré-venda exclusiva VIP. As inscrições abrem para todos em
+                        <strong th:text="${@fmt.dataHora(evento.aberturaGeral)}">data</strong>.
+                    </div>
+                    <div class="resumo-valores mb-2" style="max-width: 360px">
+                        <span>Valor</span><span class="text-end" th:text="${@fmt.moeda(orcamento.valorBase)}">R$</span>
+                        <th:block th:if="${orcamento.temDesconto()}">
+                            <span class="desconto" th:text="'Desconto VIP (' + ${orcamento.percentualDesconto} + '%)'"></span>
+                            <span class="desconto text-end" th:text="'- ' + ${@fmt.moeda(orcamento.desconto)}"></span>
+                        </th:block>
+                        <span class="total">Total</span><span class="total text-end" th:text="${@fmt.moeda(orcamento.total)}">R$</span>
+                    </div>
+                    <form th:if="${evento.lotado}" th:action="@{/membro/eventos/{id}/espera(id=${evento.id})}" method="post">
+                        <p class="text-secondary">Este evento está lotado. Entre na lista de espera para ser chamado se abrir uma vaga.</p>
+                        <button class="btn btn-warning" type="submit"><i class="bi bi-hourglass"></i> Entrar na lista de espera</button>
+                    </form>
+                    <form th:unless="${evento.lotado}" th:action="@{/membro/eventos/{id}/inscrever(id=${evento.id})}"
+                          th:object="${form}" method="post" novalidate>
+                        <th:block th:unless="${orcamento.gratuito()}">
+                            <div th:replace="~{fragments/layout :: pagamento(null)}"></div>
+                            <button type="button" class="btn btn-link btn-sm px-0" data-cartao-teste>Preencher cartão de teste</button>
+                        </th:block>
+                        <div class="mt-2"><button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> Confirmar inscrição</button></div>
+                    </form>
+                </th:block>
+            </section>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

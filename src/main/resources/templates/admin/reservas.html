@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reservas')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Reservas</h1><p>O cancelamento pela administração devolve o valor integral e avisa o membro.</p></div>
+        <div class="btn-group" role="group" aria-label="Filtro">
+            <a class="btn btn-outline-primary" th:classappend="${filtro == 'proximas'} ? 'active'" th:href="@{/admin/reservas(filtro='proximas')}">Próximas</a>
+            <a class="btn btn-outline-primary" th:classappend="${filtro == 'passadas'} ? 'active'" th:href="@{/admin/reservas(filtro='passadas')}">Realizadas</a>
+            <a class="btn btn-outline-primary" th:classappend="${filtro == 'canceladas'} ? 'active'" th:href="@{/admin/reservas(filtro='canceladas')}">Canceladas</a>
+            <a class="btn btn-outline-primary" th:classappend="${filtro == 'todas'} ? 'active'" th:href="@{/admin/reservas(filtro='todas')}">Todas</a>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <section class="cartao">
+        <div th:if="${#lists.isEmpty(reservas)}" class="vazio"><i class="bi bi-calendar-x"></i>Nenhuma reserva neste filtro.</div>
+        <div class="tabela-rolavel" th:unless="${#lists.isEmpty(reservas)}">
+            <table class="table">
+                <thead><tr><th>Nº</th><th>Espaço</th><th>Responsável</th><th>Data</th><th>Horário</th><th class="num">Pessoas</th><th class="num">Valor</th><th>Situação</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="r : ${reservas}">
+                    <td class="text-secondary" th:text="${r.id}">R</td>
+                    <td th:text="${r.espacoNome}">sala</td>
+                    <td>
+                        <span th:if="${r.deEvento}" class="selo selo-alerta"><i class="bi bi-calendar-event"></i> Evento</span>
+                        <a th:unless="${r.deEvento}" th:href="@{/admin/membros/{id}(id=${r.membroId})}" th:text="${nomes.get(r.membroId) ?: r.membroId}">nome</a>
+                    </td>
+                    <td class="text-nowrap" th:text="${@fmt.data(r.inicio)}">data</td>
+                    <td th:text="${@fmt.periodo(r.inicio, r.fim)}">h</td>
+                    <td class="num" th:text="${r.participantes}">2</td>
+                    <td class="num" th:text="${@fmt.moeda(r.valorTotal)}">R$</td>
+                    <td th:text="${r.getSituacao(agora)}">ok</td>
+                    <td class="text-end">
+                        <form th:if="${r.ativa and !r.deEvento and r.inicio.isAfter(agora)}" class="d-flex gap-1"
+                              th:action="@{/admin/reservas/{id}/cancelar(id=${r.id})}" method="post"
+                              data-confirmar="Cancelar esta reserva com reembolso integral ao membro?">
+                            <input class="form-control form-control-sm" name="motivo" placeholder="Motivo (opcional)" style="min-width:140px" aria-label="Motivo">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Cancelar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

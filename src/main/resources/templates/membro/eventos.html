@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Eventos')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Eventos e workshops</h1>
+            <p>As inscrições abrem primeiro para membros VIP. Em eventos especiais, o VIP tem 15% de desconto.</p></div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <div th:if="${#lists.isEmpty(eventos)}" class="cartao vazio"><i class="bi bi-calendar2"></i>Nenhum evento programado.</div>
+    <div class="row g-3">
+        <div class="col-md-6 col-xl-4" th:each="e : ${eventos}">
+            <article class="cartao h-100 d-flex flex-column gap-2">
+                <div class="d-flex flex-wrap gap-1">
+                    <span th:if="${e.especial}" class="selo selo-vip"><i class="bi bi-stars"></i> Especial</span>
+                    <span th:if="${e.inscricaoAtivaDe(membro.id).isPresent()}" class="selo selo-ok">Inscrito</span>
+                    <span th:if="${e.estaNaListaEspera(membro.id)}" class="selo selo-alerta">Lista de espera</span>
+                    <span th:if="${e.lotado}" class="selo selo-erro">Lotado</span>
+                    <span th:if="${!e.isAbertoParaTodos(agora)}" class="selo selo-info">Pré-venda VIP</span>
+                </div>
+                <h2 class="m-0"><a class="text-reset" th:href="@{/membro/eventos/{id}(id=${e.id})}" th:text="${e.titulo}">Evento</a></h2>
+                <div class="small text-secondary">
+                    <i class="bi bi-calendar3"></i> <span th:text="${@fmt.dataHora(e.inicio)}">data</span> ·
+                    <i class="bi bi-geo-alt"></i> <span th:text="${e.espacoNome}">local</span>
+                </div>
+                <p class="small mb-0 flex-grow-1" th:text="${e.descricao}">descrição</p>
+                <div class="d-flex justify-content-between align-items-end">
+                    <div>
+                        <div class="rotulo">Vagas</div>
+                        <strong th:text="${e.vagasRestantes} + ' de ' + ${e.capacidade}">10 de 40</strong>
+                    </div>
+                    <div class="text-end">
+                        <div class="rotulo">Valor</div>
+                        <strong th:text="${e.preco.signum() == 0} ? 'Gratuito' : ${@fmt.moeda(e.calcularValor(vip).total())}">R$</strong>
+                    </div>
+                </div>
+                <a class="btn btn-outline-primary" th:href="@{/membro/eventos/{id}(id=${e.id})}">Ver detalhes</a>
+            </article>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

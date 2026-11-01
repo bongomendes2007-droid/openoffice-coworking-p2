@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${membro.nome})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <a class="small" th:href="@{/admin/membros}"><i class="bi bi-arrow-left"></i> Membros</a>
+    <div class="cabecalho mt-2">
+        <div>
+            <h1 th:text="${membro.nome}">nome</h1>
+            <p th:text="${membro.email} + ' · ' + ${membro.documento} + ' · ' + ${membro.telefone ?: 'sem telefone'}">dados</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-outline-primary" th:href="@{/admin/membros/{id}/editar(id=${membro.id})}"><i class="bi bi-pencil"></i> Editar</a>
+            <form th:action="@{/admin/membros/{id}/ativo(id=${membro.id})}" method="post"
+                  th:attr="data-confirmar=${membro.ativo} ? 'Desativar o acesso deste membro?' : 'Reativar o acesso deste membro?'">
+                <button class="btn" th:classappend="${membro.ativo} ? 'btn-outline-warning' : 'btn-outline-success'" type="submit"
+                        th:text="${membro.ativo} ? 'Desativar' : 'Reativar'">Desativar</button>
+            </form>
+            <form th:action="@{/admin/membros/{id}/remover(id=${membro.id})}" method="post"
+                  data-confirmar="Remover definitivamente este membro? Só é possível se ele não tiver histórico.">
+                <button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Remover</button>
+            </form>
+        </div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <div class="row g-3">
+        <div class="col-lg-4 d-grid gap-3 align-content-start">
+            <section class="cartao">
+                <div class="rotulo">Plano atual</div>
+                <div class="h4 mt-1" th:text="${membro.getPlanoAtual(hojeData).isPresent()} ? ${membro.getPlanoAtual(hojeData).get().descricao} : 'Sem plano ativo'">VIP</div>
+                <div class="small text-secondary" th:if="${membro.fimDaCobertura.isPresent()}" th:text="'Coberto até ' + ${@fmt.data(membro.fimDaCobertura.get())}">até</div>
+                <hr>
+                <div class="rotulo">Total pago</div>
+                <div class="numero" th:text="${@fmt.moeda(totalPago)}">R$</div>
+            </section>
+            <section class="cartao">
+                <h2 class="mb-2">Planos</h2>
+                <div th:each="a : ${membro.assinaturas}" class="d-flex justify-content-between small py-1 border-bottom">
+                    <span th:text="${a.tipo.descricao}">VIP</span>
+                    <span class="text-secondary" th:text="${@fmt.data(a.inicio)} + ' a ' + ${@fmt.data(a.fim)}">datas</span>
+                </div>
+            </section>
+            <section class="cartao">
+                <h2 class="mb-2">Eventos</h2>
+                <div th:if="${#lists.isEmpty(eventos)}" class="small text-secondary">Nenhum.</div>
+                <div th:each="e : ${eventos}" class="small py-1"><a th:href="@{/admin/eventos/{id}(id=${e.id})}" th:text="${e.titulo}">evento</a></div>
+            </section>
+        </div>
+        <div class="col-lg-8 d-grid gap-3 align-content-start">
+            <section class="cartao">
+                <h2 class="mb-2">Reservas</h2>
+                <div th:if="${#lists.isEmpty(reservas)}" class="small text-secondary">Nenhuma reserva.</div>
+                <div class="tabela-rolavel" th:unless="${#lists.isEmpty(reservas)}" style="max-height: 320px">
+                    <table class="table table-sm">
+                        <thead><tr><th>Nº</th><th>Espaço</th><th>Data</th><th>Horário</th><th class="num">Valor</th><th>Situação</th></tr></thead>
+                        <tbody>
+                        <tr th:each="r : ${reservas}">
+                            <td th:text="${r.id}">R</td><td th:text="${r.espacoNome}">sala</td>
+                            <td th:text="${@fmt.data(r.inicio)}">data</td><td th:text="${@fmt.periodo(r.inicio, r.fim)}">h</td>
+                            <td class="num" th:text="${@fmt.moeda(r.valorTotal)}">R$</td>
+                            <td th:text="${r.getSituacao(agora)}">ok</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="cartao">
+                <h2 class="mb-2">Histórico financeiro</h2>
+                <div th:if="${#lists.isEmpty(cobrancas)}" class="small text-secondary">Nenhuma movimentação.</div>
+                <div class="tabela-rolavel" th:unless="${#lists.isEmpty(cobrancas)}" style="max-height: 320px">
+                    <table class="table table-sm">
+                        <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Situação</th><th class="num">Valor</th></tr></thead>
+                        <tbody>
+                        <tr th:each="c : ${cobrancas}">
+                            <td th:text="${@fmt.data(c.dataReferencia)}">data</td><td th:text="${c.tipo.descricao}">tipo</td>
+                            <td th:text="${c.descricao}">desc</td><td th:text="${c.status.descricao}">paga</td>
+                            <td class="num" th:text="${@fmt.moeda(c.valor)}">R$</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="cartao">
+                <h2 class="mb-2">Visitas autorizadas</h2>
+                <div th:if="${#lists.isEmpty(visitas)}" class="small text-secondary">Nenhuma visita.</div>
+                <div class="tabela-rolavel" th:unless="${#lists.isEmpty(visitas)}" style="max-height: 260px">
+                    <table class="table table-sm">
+                        <thead><tr><th>Visitante</th><th>Entrada</th><th>Saída</th></tr></thead>
+                        <tbody>
+                        <tr th:each="v : ${visitas}">
+                            <td th:text="${v.visitanteNome}">nome</td><td th:text="${@fmt.dataHora(v.entrada)}">e</td>
+                            <td th:text="${v.saida != null} ? ${@fmt.dataHora(v.saida)} : 'No espaço'">s</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

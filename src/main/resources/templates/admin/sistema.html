@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sistema')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho"><div><h1>Sistema</h1><p>Dados, backups, Google Drive e auditoria.</p></div></div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <div th:each="a : ${avisos}" class="alert alert-warning py-2 small"><i class="bi bi-exclamation-triangle"></i> <span th:text="${a}">aviso</span></div>
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <section class="cartao h-100">
+                <h2 class="mb-2"><i class="bi bi-hdd"></i> Dados locais</h2>
+                <p class="small text-secondary mb-2">Os dados ficam em arquivos JSON na pasta:</p>
+                <code class="d-block mb-3 small text-break" th:text="${pastaDados}">data</code>
+                <p class="small text-secondary">Um backup automático é criado sempre que o sistema inicia (são mantidos os 10 mais recentes).</p>
+                <form th:action="@{/admin/sistema/backup}" method="post">
+                    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-archive"></i> Criar backup agora</button>
+                </form>
+            </section>
+        </div>
+        <div class="col-lg-6">
+            <section class="cartao h-100">
+                <h2 class="mb-2"><i class="bi bi-google"></i> Google Drive</h2>
+                <p class="small" th:classappend="${driveConfigurado} ? 'text-success' : 'text-secondary'" th:text="${driveSituacao}">situação</p>
+                <p class="small text-secondary">Os arquivos são enviados para a pasta <strong th:text="${pastaDrive}">pasta</strong> do seu Drive.</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <form th:action="@{/admin/sistema/drive/enviar}" method="post">
+                        <button class="btn btn-primary" type="submit" th:disabled="${!driveConfigurado}"><i class="bi bi-cloud-upload"></i> Enviar dados</button>
+                    </form>
+                    <form th:action="@{/admin/sistema/drive/baixar}" method="post"
+                          data-confirmar="Substituir os dados locais pelos do Google Drive? Um backup local será criado antes.">
+                        <button class="btn btn-outline-primary" type="submit" th:disabled="${!driveConfigurado}"><i class="bi bi-cloud-download"></i> Restaurar do Drive</button>
+                    </form>
+                </div>
+                <p th:if="${!driveConfigurado}" class="small mt-2 mb-0">Veja a seção "Google Drive" do README para configurar.</p>
+            </section>
+        </div>
+    </div>
+    <section class="cartao mt-3">
+        <h2 class="mb-2"><i class="bi bi-journal-text"></i> Auditoria (data/auditoria.log)</h2>
+        <div class="log"><div th:each="l : ${auditoria}" th:text="${l}">linha</div>
+            <div th:if="${#lists.isEmpty(auditoria)}">Nenhum registro.</div></div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

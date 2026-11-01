@@ -1,0 +1,22 @@
+# Compilação
+target/
+*.class
+
+# Dados gerados pelo sistema (cada computador tem os seus)
+data/
+relatorios/
+tokens/
+
+# Credenciais (NUNCA versionar)
+.env
+credentials.json
+client_secret*.json
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+.DS_Store

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Visitantes')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Visitantes</h1><p th:text="'Você pode ter até ' + ${limite} + ' visitantes ao mesmo tempo.'">até 3</p></div>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <div class="row g-3">
+        <div class="col-lg-5">
+            <section class="cartao">
+                <h2 class="mb-3">Registrar entrada</h2>
+                <form th:action="@{/membro/visitantes}" th:object="${form}" method="post" class="d-grid gap-3" novalidate>
+                    <div>
+                        <label class="form-label" for="nome">Nome do visitante</label>
+                        <input class="form-control" th:field="*{nome}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{nome}"></div>
+                    </div>
+                    <div>
+                        <label class="form-label" for="documento">Documento (CPF ou RG)</label>
+                        <input class="form-control" th:field="*{documento}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{documento}"></div>
+                    </div>
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-box-arrow-in-right"></i> Autorizar entrada</button>
+                </form>
+            </section>
+        </div>
+        <div class="col-lg-7">
+            <section class="cartao">
+                <div class="cartao-titulo">
+                    <h2>No espaço agora</h2>
+                    <span class="selo" th:classappend="${#lists.size(ativas) >= limite} ? 'selo-alerta' : 'selo-info'"
+                          th:text="${#lists.size(ativas)} + ' de ' + ${limite}">1 de 3</span>
+                </div>
+                <div th:if="${#lists.isEmpty(ativas)}" class="vazio"><i class="bi bi-door-closed"></i>Nenhum visitante no espaço.</div>
+                <div th:each="v : ${ativas}" class="d-flex justify-content-between align-items-center border-bottom py-2 gap-2">
+                    <div>
+                        <strong th:text="${v.visitanteNome}">Nome</strong>
+                        <small class="d-block text-secondary" th:text="${v.visitanteDocumento} + ' · entrada ' + ${@fmt.hora(v.entrada)} + ' · ' + ${@fmt.duracao(v.getPermanencia(agora))}">doc</small>
+                    </div>
+                    <form th:action="@{/membro/visitantes/{id}/saida(id=${v.id})}" method="post" class="m-0">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-box-arrow-right"></i> Registrar saída</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+    <section class="cartao mt-3">
+        <h2 class="mb-2">Histórico de visitas</h2>
+        <div th:if="${#lists.isEmpty(historico)}" class="text-secondary">Nenhuma visita registrada.</div>
+        <div class="tabela-rolavel" th:unless="${#lists.isEmpty(historico)}">
+            <table class="table">
+                <thead><tr><th>Visitante</th><th>Documento</th><th>Entrada</th><th>Saída</th><th>Permanência</th></tr></thead>
+                <tbody>
+                <tr th:each="v : ${historico}">
+                    <td th:text="${v.visitanteNome}">nome</td>
+                    <td th:text="${v.visitanteDocumento}">doc</td>
+                    <td th:text="${@fmt.dataHora(v.entrada)}">entrada</td>
+                    <td><span th:if="${v.saida != null}" th:text="${@fmt.dataHora(v.saida)}"></span>
+                        <span th:if="${v.saida == null}" class="selo selo-info">No espaço</span></td>
+                    <td th:text="${@fmt.duracao(v.getPermanencia(agora))}">1h</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

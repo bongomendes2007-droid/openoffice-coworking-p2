@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Eventos')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Eventos e workshops</h1></div>
+        <a class="btn btn-primary" th:href="@{/admin/eventos/novo}"><i class="bi bi-calendar-plus"></i> Novo evento</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <section class="cartao">
+        <div th:if="${#lists.isEmpty(eventos)}" class="vazio"><i class="bi bi-calendar2"></i>Nenhum evento cadastrado.</div>
+        <div class="tabela-rolavel" th:unless="${#lists.isEmpty(eventos)}">
+            <table class="table">
+                <thead><tr><th>Evento</th><th>Data</th><th>Espaço</th><th class="num">Inscritos</th><th class="num">Espera</th><th class="num">Preço</th><th>Situação</th></tr></thead>
+                <tbody>
+                <tr th:each="e : ${eventos}">
+                    <td><a th:href="@{/admin/eventos/{id}(id=${e.id})}" th:text="${e.titulo}">evento</a>
+                        <span th:if="${e.especial}" class="selo selo-vip ms-1">Especial</span></td>
+                    <td class="text-nowrap" th:text="${@fmt.dataHora(e.inicio)}">data</td>
+                    <td th:text="${e.espacoNome}">local</td>
+                    <td class="num" th:text="${e.vagasOcupadas} + '/' + ${e.capacidade}">10/40</td>
+                    <td class="num" th:text="${#lists.size(e.listaEspera)}">0</td>
+                    <td class="num" th:text="${e.preco.signum() == 0} ? 'Grátis' : ${@fmt.moeda(e.preco)}">R$</td>
+                    <td>
+                        <span th:if="${e.isRealizado(agora)}" class="selo selo-neutro">Realizado</span>
+                        <span th:if="${!e.isRealizado(agora) and e.lotado}" class="selo selo-erro">Lotado</span>
+                        <span th:if="${!e.isRealizado(agora) and !e.lotado and !e.isAbertoParaTodos(agora)}" class="selo selo-vip">Pré-venda VIP</span>
+                        <span th:if="${!e.isRealizado(agora) and !e.lotado and e.isAbertoParaTodos(agora)}" class="selo selo-ok">Inscrições abertas</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

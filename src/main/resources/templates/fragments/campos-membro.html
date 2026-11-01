@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Campos comuns de cadastro/edição de membro. Usado dentro de um form com th:object. -->
+<th:block th:fragment="campos">
+    <div>
+        <label class="form-label" for="nome">Nome completo</label>
+        <input class="form-control" th:field="*{nome}" th:errorclass="is-invalid" autocomplete="name">
+        <div class="invalid-feedback" th:errors="*{nome}"></div>
+    </div>
+    <div class="row g-2">
+        <div class="col-sm-6">
+            <label class="form-label" for="cpf">CPF</label>
+            <input class="form-control" th:field="*{cpf}" th:errorclass="is-invalid" placeholder="000.000.000-00" inputmode="numeric">
+            <div class="invalid-feedback" th:errors="*{cpf}"></div>
+        </div>
+        <div class="col-sm-6">
+            <label class="form-label" for="telefone">Telefone</label>
+            <input class="form-control" th:field="*{telefone}" th:errorclass="is-invalid" placeholder="(85) 99999-9999" autocomplete="tel">
+            <div class="invalid-feedback" th:errors="*{telefone}"></div>
+        </div>
+    </div>
+    <div>
+        <label class="form-label" for="email">E-mail</label>
+        <input class="form-control" type="email" th:field="*{email}" th:errorclass="is-invalid" autocomplete="email">
+        <div class="invalid-feedback" th:errors="*{email}"></div>
+    </div>
+</th:block>
+</body>
+</html>

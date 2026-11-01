@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Minhas reservas')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+<main class="container-xl pagina">
+    <div class="cabecalho">
+        <div><h1>Minhas reservas</h1><p>Cancelamentos com menos de 24h de antecedência retêm 50% do valor.</p></div>
+        <a class="btn btn-primary" th:href="@{/membro/reservas/nova}"><i class="bi bi-plus-lg"></i> Nova reserva</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+    <div class="cartao">
+        <div th:if="${#lists.isEmpty(reservas)}" class="vazio"><i class="bi bi-calendar-x"></i>Você ainda não fez reservas.</div>
+        <div class="tabela-rolavel" th:unless="${#lists.isEmpty(reservas)}">
+            <table class="table">
+                <thead>
+                <tr><th>Nº</th><th>Espaço</th><th>Data</th><th>Horário</th><th class="num">Pessoas</th><th class="num">Valor</th><th>Situação</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${reservas}" th:with="situacao=${r.getSituacao(agora)}">
+                    <td class="text-secondary" th:text="${r.id}">R0001</td>
+                    <td th:text="${r.espacoNome}">Sala</td>
+                    <td th:text="${@fmt.data(r.inicio)}">01/11</td>
+                    <td th:text="${@fmt.periodo(r.inicio, r.fim)}">14:00</td>
+                    <td class="num" th:text="${r.participantes}">2</td>
+                    <td class="num">
+                        <span th:text="${@fmt.moeda(r.valorTotal)}">R$</span>
+                        <small th:if="${r.percentualDesconto > 0}" class="d-block text-success" th:text="'-' + ${r.percentualDesconto} + '% VIP'"></small>
+                        <small th:if="${r.multa.signum() > 0}" class="d-block text-danger" th:text="'multa ' + ${@fmt.moeda(r.multa)}"></small>
+                    </td>
+                    <td>
+                        <span class="selo" th:classappend="${situacao == 'Confirmada'} ? 'selo-ok' : (${situacao == 'Cancelada'} ? 'selo-erro' : (${situacao == 'Em andamento'} ? 'selo-info' : 'selo-neutro'))"
+                              th:text="${situacao}">Confirmada</span>
+                    </td>
+                    <td class="text-end">
+                        <a th:if="${r.ativa and r.inicio.isAfter(agora)}" class="btn btn-sm btn-outline-danger"
+                           th:href="@{/membro/reservas/{id}/cancelar(id=${r.id})}">Cancelar</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório Final · OpenOffice Coworking</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm 20mm 20mm; }
+  :root { --verde: #1f6f5c; --verde-claro: #e3efe9; --texto: #1b211f; --suave: #5b6662; --linha: #d9ddd8; --amarelo: #fff4cc; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: var(--texto); font-size: 10.5pt; line-height: 1.5; margin: 0; }
+  h1 { font-size: 20pt; margin: 0 0 4mm; color: var(--texto); }
+  h2 { font-size: 14pt; color: var(--verde); margin: 9mm 0 3mm; padding-bottom: 1.5mm; border-bottom: 1.5px solid var(--verde); break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 5mm 0 2mm; break-after: avoid; }
+  p { margin: 0 0 2.5mm; text-align: justify; }
+  ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+  li { margin-bottom: 1mm; }
+  table { table-layout: fixed; width: 100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9.3pt; break-inside: auto; }
+  th { background: var(--verde); color: #fff; text-align: left; padding: 1.6mm 2mm; font-weight: 600; }
+  td { border-bottom: 1px solid var(--linha); padding: 1.5mm 2mm; vertical-align: top; }
+  tr { break-inside: avoid; }
+  tr:nth-child(even) td { background: #f6f8f6; }
+  td code { word-break: break-word; }
+  code { font-family: Consolas, "Courier New", monospace; font-size: 9pt; background: #eef1ee; padding: 0 1mm; border-radius: 2px; }
+  .capa { height: 250mm; display: flex; flex-direction: column; justify-content: space-between; break-after: page; }
+  .capa .topo { color: var(--suave); font-size: 11pt; }
+  .capa .titulo { margin-top: 40mm; }
+  .capa .titulo .rotulo { color: var(--verde); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 10pt; }
+  .capa .titulo h1 { font-size: 30pt; line-height: 1.1; margin: 3mm 0 4mm; }
+  .capa .titulo p { font-size: 12.5pt; color: var(--suave); text-align: left; max-width: 140mm; }
+  .capa .dados { border-top: 2px solid var(--verde); padding-top: 5mm; font-size: 10.5pt; }
+  .capa .dados div { margin-bottom: 1.5mm; }
+  .preencher { background: var(--amarelo); border: 1px dashed #c9a400; padding: 0 1.5mm; border-radius: 2px; }
+  .caixa-preencher { background: var(--amarelo); border: 1px dashed #c9a400; border-radius: 4px; padding: 3mm 4mm; margin: 2mm 0 4mm; font-size: 9.8pt; color: #5a4a00; }
+  .caixa-preencher p { text-align: left; }
+  .destaque { background: var(--verde-claro); border-left: 3px solid var(--verde); padding: 2.5mm 4mm; margin: 2mm 0 4mm; }
+  figure { margin: 3mm 0 5mm; break-inside: avoid; }
+  figure img { width: 100%; border: 1px solid var(--linha); border-radius: 3px; display: block; }
+  figcaption { font-size: 8.8pt; color: var(--suave); margin-top: 1.5mm; }
+  .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  pre.codigo { background: #121816; color: #d6ddd9; font-family: Consolas, "Courier New", monospace; font-size: 8.4pt; line-height: 1.45; padding: 4mm; border-radius: 4px; white-space: pre-wrap; break-inside: avoid; margin: 2mm 0 4mm; }
+  .k { color: #c7a0ff; } .c { color: #7d8a85; } .s { color: #6fd3a5; } .t { color: #8cc4ff; } .a { color: #f2c46d; }
+  .fluxo { display: flex; flex-wrap: wrap; gap: 2mm; align-items: center; font-size: 9.3pt; margin: 2mm 0 4mm; }
+  .fluxo span { border: 1px solid var(--verde); border-radius: 3px; padding: 1mm 2.5mm; background: #fff; }
+  .fluxo b { color: var(--verde); }
+  .arvore { font-family: Consolas, "Courier New", monospace; font-size: 9pt; background: #f6f8f6; border: 1px solid var(--linha); padding: 3mm 4mm; border-radius: 4px; white-space: pre; line-height: 1.45; break-inside: avoid; }
+  .quebra { break-before: page; }
+  .ref li { font-size: 9.5pt; word-break: break-word; }
+</style>
+</head>
+<body>
+
+<!-- ======================= CAPA ======================= -->
+<section class="capa">
+  <div class="topo">Programação Orientada a Objetos · Trabalho da P2</div>
+  <div class="titulo">
+    <div class="rotulo">Relatório final</div>
+    <h1>OpenOffice Coworking</h1>
+    <p>Sistema web de gestão de coworking: espaços, reservas, planos de assinatura, visitantes, eventos, pagamentos e relatórios de ocupação.</p>
+  </div>
+  <div class="dados">
+    <div><strong>Instituição:</strong> <span class="preencher">[nome da faculdade]</span></div>
+    <div><strong>Professor:</strong> <span class="preencher">[nome do professor]</span></div>
+    <div><strong>Equipe:</strong> <span class="preencher">[Integrante 1]</span>, <span class="preencher">[Integrante 2]</span>, <span class="preencher">[Integrante 3]</span>, <span class="preencher">[Integrante 4]</span>, <span class="preencher">[Integrante 5]</span></div>
+    <div><strong>Repositório:</strong> <span class="preencher">[https://github.com/usuario/openoffice-coworking]</span></div>
+    <div><strong>Data:</strong> novembro de 2026</div>
+  </div>
+</section>
+
+<!-- ======================= 1. INTRODUÇÃO ======================= -->
+<h2>1. Introdução ao projeto</h2>
+<h3>1.1 Visão geral e problema</h3>
+<p>O espaço de coworking "OpenOffice" aluga salas, mesas e espaços para eventos corporativos. Sem um sistema, o controle de reservas fica sujeito a conflitos de horário, cobranças erradas e falta de controle sobre quem entra no prédio. O <strong>OpenOffice Coworking</strong> centraliza essas operações numa aplicação web que roda no navegador.</p>
+<p>O sistema controla as reservas sem sobreposição e dentro da capacidade de cada espaço. Também gerencia membros, planos de assinatura e visitantes, organiza eventos com prioridade para membros VIP, registra pagamentos e gera relatórios de ocupação e financeiros.</p>
+
+<h3>1.2 Público-alvo</h3>
+<ul>
+  <li><strong>Membros do coworking</strong> (profissionais autônomos, pequenas empresas e equipes remotas): reservam espaços, contratam planos, autorizam visitantes e se inscrevem em eventos.</li>
+  <li><strong>Administração / recepção</strong>: cadastra espaços e eventos, acompanha a ocupação, controla visitantes e emite relatórios.</li>
+</ul>
+
+<h3>1.3 Principais funcionalidades</h3>
+<ul>
+  <li>Cadastro de espaços: estação de trabalho, sala de reunião (R$ 60/h), sala privada (R$ 80/h, exclusiva VIP) e auditório (R$ 200/h).</li>
+  <li>Reservas sem sobreposição, dentro da capacidade, com antecedência máxima de 7 dias (30 dias para VIP).</li>
+  <li>Cancelamento com menos de 24h retém 50% do valor.</li>
+  <li>Planos Diário (R$ 50), Semanal (R$ 200), Mensal (R$ 600) e VIP (R$ 900/mês), com 20% de desconto para VIP em salas de reunião e auditório.</li>
+  <li>Visitantes autorizados por membros com plano ativo, no máximo 3 ao mesmo tempo, com histórico de visitas.</li>
+  <li>Eventos e workshops com controle de vagas, inscrição antecipada para VIP, 15% de desconto em eventos especiais e lista de espera.</li>
+  <li>Pagamentos simulados (PIX, cartão e boleto) e histórico financeiro.</li>
+  <li>Relatórios de ocupação por sala e por horário, financeiro, de visitas e de eventos, com gráficos e exportação em PDF e CSV.</li>
+  <li>Login com dois perfis (administrador e membro), persistência em arquivos JSON e sincronização opcional com o Google Drive.</li>
+</ul>
+
+<h3>1.4 Fluxo geral do sistema</h3>
+<div class="fluxo">
+  <span>Membro se cadastra</span><b>→</b><span>Assina um plano</span><b>→</b><span>Consulta a agenda</span><b>→</b><span>Reserva e paga</span><b>→</b><span>Autoriza visitantes</span><b>→</b><span>Inscreve-se em eventos</span>
+</div>
+<div class="fluxo">
+  <span>Administrador cadastra espaços</span><b>→</b><span>Cria eventos (o espaço é reservado)</span><b>→</b><span>Acompanha painel e visitas</span><b>→</b><span>Emite relatórios (tela, PDF, CSV)</span>
+</div>
+<p>As duas pontas se encontram nos dados. A reserva de um membro aparece na agenda e no relatório de ocupação. O pagamento entra no relatório financeiro. Um evento criado pelo administrador bloqueia o espaço na agenda de todos. O plano do membro define o que ele pode fazer: o plano VIP libera salas privadas, descontos, pré-venda de eventos e reservas com 30 dias de antecedência.</p>
+
+<!-- ======================= 2. FUNCIONALIDADES ======================= -->
+<h2>2. Funcionalidades implementadas</h2>
+<table>
+  <tr><th style="width:26%">Requisito do enunciado</th><th>Como foi implementado</th></tr>
+  <tr><td>Cadastro de membros, visitantes e tipos de espaços</td><td>Cadastro público de membros (com validação de CPF e e-mail únicos), cadastro e edição pelo administrador, desativação e remoção. Visitantes são registrados pelo documento e reaproveitados nas próximas visitas. Quatro tipos de espaço com preço, capacidade e situação (ativo/desativado).</td></tr>
+  <tr><td>Controle de reservas</td><td>Fluxo em 2 passos (dados → resumo com valor e pagamento). Valida sobreposição, capacidade, antecedência pelo plano, horário de funcionamento (08h–22h, blocos de 30 min), acesso VIP e plano ativo. Em caso de conflito, sugere o horário livre mais próximo. Agenda visual por sala e hora.</td></tr>
+  <tr><td>Cancelamento com multa</td><td>Prévia antes de confirmar mostrando multa e reembolso. Com menos de 24h, 50% do valor fica retido e é registrado como cobrança do tipo "Multa". O administrador pode cancelar sem multa, e o membro é avisado.</td></tr>
+  <tr><td>Planos e benefícios VIP</td><td>Quatro planos com preço e duração. A renovação começa no dia seguinte ao fim do plano atual. Os benefícios VIP são aplicados automaticamente: salas privadas, 20% em sala de reunião e auditório, 15% em eventos especiais, pré-venda e 30 dias de antecedência.</td></tr>
+  <tr><td>Registro e autorização de visitantes</td><td>Apenas membros com plano ativo autorizam visitantes, com no máximo 3 ao mesmo tempo. O mesmo visitante não entra duas vezes sem registrar a saída. Entradas, saídas e histórico ficam disponíveis para o membro e para a recepção.</td></tr>
+  <tr><td>Eventos e workshops</td><td>Criados pelo administrador, reservam o espaço (sem conflito) e limitam as vagas à capacidade. Inscrições abrem primeiro para VIP por um número configurável de dias. Evento lotado tem lista de espera: quando alguém cancela, o primeiro da fila ganha a vaga e recebe um aviso para pagar.</td></tr>
+  <tr><td>Sistema de pagamento</td><td>PIX, cartão de crédito (validação de Luhn, validade, CVV e até 6 parcelas) e boleto, todos simulados. Cobranças pendentes podem ser pagas depois. Histórico financeiro com comprovantes. Só os 4 últimos dígitos do cartão são gravados.</td></tr>
+  <tr><td>Relatórios de uso</td><td>Ocupação por sala, ocupação por horário e sala (mapa de calor), financeiro por origem da receita, visitas e eventos. Período configurável, gráfico (Chart.js), resumo e exportação para PDF (iText) e CSV.</td></tr>
+  <tr><td>Persistência em arquivos</td><td>Um arquivo JSON por entidade na pasta <code>data/</code>, gravação atômica, backup automático a cada inicialização e log de auditoria em TXT.</td></tr>
+  <tr><td>Desafio: Google Drive</td><td>Envio e restauração dos arquivos de dados numa pasta do Google Drive via OAuth (escopo <code>drive.file</code>), configurado por <code>.env</code>.</td></tr>
+</table>
+
+<h3>2.1 Funcionalidades extras</h3>
+<ul>
+  <li><strong>Agenda visual</strong> de ocupação: clicar num horário livre abre a reserva já preenchida.</li>
+  <li><strong>Avisos no painel</strong> do membro: plano vencendo, vaga liberada na lista de espera, reserva cancelada pela administração.</li>
+  <li><strong>Painel do administrador</strong> com membros ativos, reservas do dia, visitantes no prédio, receita do mês e atividade recente.</li>
+  <li><strong>Bloqueio de login</strong> após 5 tentativas erradas e senhas guardadas com hash BCrypt.</li>
+  <li><strong>43 testes automatizados</strong> (JUnit 5) cobrindo as regras do enunciado.</li>
+  <li><strong>Telas responsivas</strong> que funcionam no celular.</li>
+</ul>
+
+<h2>3. Funcionalidades não implementadas (e por quê)</h2>
+<table>
+  <tr><th style="width:30%">Funcionalidade</th><th>Motivo</th></tr>
+  <tr><td>Pagamento real (gateway de cartão, PIX ou boleto)</td><td>Exigiria contrato com uma empresa de pagamentos e credenciais reais. O enunciado pede um "sistema de pagamento" e o foco da disciplina é POO, por isso os pagamentos são simulados, mas com validação e comprovante.</td></tr>
+  <tr><td>Envio de e-mails (confirmação de reserva, aviso de vaga)</td><td>Precisaria de um servidor SMTP e credenciais. Os avisos aparecem no painel do membro.</td></tr>
+  <tr><td>Prazo para pagar a vaga liberada na lista de espera</td><td>A vaga fica reservada até o pagamento. Um prazo de expiração exigiria uma rotina agendada e ficou como melhoria futura.</td></tr>
+  <tr><td>Proteção CSRF e HTTPS</td><td>O sistema foi feito para rodar localmente. Usar o Spring Security completo resolveria isso, mas aumentaria a complexidade sem relação com POO.</td></tr>
+  <tr><td>Banco de dados</td><td>O enunciado pede persistência em arquivos (CSV, JSON ou TXT). Como o código depende da interface <code>Repositorio&lt;T&gt;</code>, trocar por um banco não mudaria as regras de negócio.</td></tr>
+</table>
+<div class="caixa-preencher"><p><strong>Revisar:</strong> se a equipe deixou de fazer algo combinado no início (ou não chegou a testar o Google Drive com credenciais reais), registre aqui com o motivo.</p></div>
+
+<!-- ======================= 4. ESTRUTURA ======================= -->
+<h2 class="quebra">4. Estrutura do código e decisões de design</h2>
+<p>O projeto usa Spring Boot apenas para a parte web (servidor, páginas e formulários). Todas as regras de negócio ficam em classes Java comuns, separadas em camadas:</p>
+<div class="fluxo"><span>Navegador</span><b>→</b><span>Controller (web)</span><b>→</b><span>Service (regras)</span><b>→</b><span>Repository</span><b>→</b><span>arquivo .json</span></div>
+<div class="arvore">br.com.openoffice
+├── model        Entidade, Pessoa, Usuario, Membro, Administrador, Visitante,
+│                Espaco (+4 subclasses), Reserva, Evento, Inscricao, Visita,
+│                Assinatura, Cobranca, Pagamento (+3 subclasses), Orcamento
+├── enums        TipoPlano, TipoEspaco, FormaPagamento, StatusReserva, ...
+├── interfaces   Autenticavel, Cobravel
+├── regra        RegrasCoworking, PoliticaCancelamento
+├── repository   Repositorio&lt;T&gt; → RepositorioJson&lt;T&gt; → 9 repositórios
+├── service      Reserva, Plano, Evento, Visitante, Financeiro, Relatorio, ...
+├── exception    RegraNegocioException + 11 subclasses
+├── report       RelatorioTabela, ExportadorPdf, ExportadorCsv
+├── integration  GoogleDriveService
+└── web          controllers, formulários, sessão/login, tratador de erros</div>
+
+<h3>4.1 Decisões principais</h3>
+<ul>
+  <li><strong>Sem JPA e sem Spring Security completo.</strong> O repositório JSON genérico e o login (sessão + interceptor + BCrypt) foram escritos pela equipe. Assim a POO fica visível e cada parte pode ser explicada linha por linha.</li>
+  <li><strong>Regras dentro dos objetos.</strong> Cada objeto conhece as próprias regras: a <code>SalaPrivada</code> sabe que é exclusiva de VIP, o <code>TipoPlano</code> sabe o próprio preço e antecedência, e a <code>Reserva</code> sabe se sobrepõe outro horário.</li>
+  <li><strong>Relógio injetável.</strong> Os serviços pedem a hora a um objeto <code>Clock</code>. Isso permitiu testar regras de data (24h, 7/30 dias, vencimento de plano) com uma data fixa.</li>
+  <li><strong>Exceções como mensagens ao usuário.</strong> Cada regra violada lança uma exceção específica. A tela mostra a mensagem e o sistema continua funcionando.</li>
+</ul>
+
+<h3>4.2 Aplicação dos princípios de POO</h3>
+<table>
+  <tr><th style="width:17%">Princípio</th><th style="width:38%">Onde foi aplicado</th><th>Por que ajudou</th></tr>
+  <tr><td><strong>Abstração</strong></td><td><code>Pessoa</code>, <code>Usuario</code>, <code>Espaco</code>, <code>Pagamento</code>, <code>Entidade</code> e <code>RepositorioJson&lt;T&gt;</code> são abstratas.</td><td>Representam conceitos que só existem nas formas concretas. Não existe um "espaço genérico", e o serviço de reservas trabalha com <code>Espaco</code> sem depender do tipo.</td></tr>
+  <tr><td><strong>Herança</strong></td><td><code>Pessoa → Usuario → Membro/Administrador</code>; <code>Pessoa → Visitante</code>; <code>Espaco → EstacaoTrabalho/SalaReuniao/SalaPrivada/Auditorio</code>; <code>Pagamento → PagamentoPix/Cartao/Boleto</code>.</td><td>Nome, documento, login, capacidade e valor ficam declarados uma única vez. Um novo tipo de sala exige só uma subclasse pequena.</td></tr>
+  <tr><td><strong>Polimorfismo</strong></td><td><code>getPrecoHora()</code>, <code>percentualDesconto()</code>, <code>validarAcesso()</code>, <code>processar()</code>, <code>getPaginaInicial()</code>, <code>ExportadorRelatorio.exportar()</code>.</td><td>O cálculo do preço e as regras de acesso não têm <code>if</code> por tipo: cada subclasse responde do seu jeito. Depois do login, cada perfil vai para a sua página.</td></tr>
+  <tr><td><strong>Encapsulamento</strong></td><td>Atributos privados, validação em construtores e setters, listas somente leitura, id definido uma única vez.</td><td>Objetos nunca ficam em estado inválido (capacidade 0, e-mail inválido, estação com 2 lugares). Os dados do cartão são <code>transient</code> e não vão para o arquivo.</td></tr>
+  <tr><td><strong>Interfaces</strong></td><td><code>Cobravel</code>, <code>Autenticavel</code>, <code>Repositorio&lt;T&gt;</code>, <code>ExportadorRelatorio</code>.</td><td>O <code>FinanceiroService</code> cobra qualquer <code>Cobravel</code> (plano, reserva ou inscrição) sem conhecer as classes concretas.</td></tr>
+</table>
+<p>Além dos quatro pilares, foram usados dois padrões de projeto. O <strong>Template Method</strong> aparece em <code>Espaco.calcularValor()</code> e <code>Pagamento.processar()</code>. O <strong>Factory Method</strong> aparece nos enums <code>TipoEspaco.criar()</code> e <code>FormaPagamento.criarPagamento()</code>.</p>
+
+<h3>4.3 Classe importante: <code>Espaco</code> e a subclasse <code>SalaPrivada</code></h3>
+<p>A classe abstrata <code>Espaco</code> concentra a regra de preço de todas as reservas. O método <code>calcularValor</code> é <code>final</code> (o algoritmo não muda), mas usa dois pontos de extensão que as subclasses sobrescrevem: <code>getPrecoHora()</code> e <code>percentualDesconto()</code>. A <code>SalaPrivada</code> sobrescreve <code>validarAcesso()</code> para somar a exigência de plano VIP à regra geral.</p>
+<pre class="codigo"><span class="a">@JsonTypeInfo</span>(use = JsonTypeInfo.Id.NAME, property = <span class="s">"tipo"</span>)   <span class="c">// guarda a subclasse no JSON</span>
+<span class="k">public abstract class</span> <span class="t">Espaco</span> <span class="k">extends</span> <span class="t">Entidade</span> {
+    <span class="k">private</span> String nome;
+    <span class="k">private int</span> capacidade;
+
+    <span class="k">public abstract</span> BigDecimal getPrecoHora();            <span class="c">// cada tipo define o seu preço</span>
+
+    <span class="k">protected int</span> percentualDesconto(<span class="k">boolean</span> membroVip) {  <span class="c">// padrão: sem desconto</span>
+        <span class="k">return</span> 0;
+    }
+
+    <span class="k">public void</span> validarAcesso(Membro membro, LocalDate hoje) {
+        <span class="k">if</span> (!membro.temPlanoAtivo(hoje)) {
+            <span class="k">throw new</span> <span class="t">PlanoInativoException</span>(<span class="s">"Você precisa de um plano ativo..."</span>);
+        }
+    }
+
+    <span class="c">/** Template Method: o cálculo é o mesmo; preço e desconto vêm das subclasses. */</span>
+    <span class="k">public final</span> Orcamento calcularValor(Duration duracao, <span class="k">boolean</span> membroVip) {
+        BigDecimal horas = BigDecimal.valueOf(duracao.toMinutes()).divide(<span class="k">BigDecimal</span>.valueOf(60), 4, HALF_UP);
+        <span class="k">return</span> Orcamento.de(getPrecoHora().multiply(horas), percentualDesconto(membroVip));
+    }
+}
+
+<span class="k">public class</span> <span class="t">SalaReuniao</span> <span class="k">extends</span> <span class="t">Espaco</span> {
+    <span class="k">public</span> BigDecimal getPrecoHora() { <span class="k">return new</span> BigDecimal(<span class="s">"60.00"</span>); }
+    <span class="a">@Override</span> <span class="k">protected int</span> percentualDesconto(<span class="k">boolean</span> vip) { <span class="k">return</span> vip ? 20 : 0; }
+}
+
+<span class="k">public class</span> <span class="t">SalaPrivada</span> <span class="k">extends</span> <span class="t">Espaco</span> {
+    <span class="k">public</span> BigDecimal getPrecoHora() { <span class="k">return new</span> BigDecimal(<span class="s">"80.00"</span>); }
+
+    <span class="a">@Override</span>
+    <span class="k">public void</span> validarAcesso(Membro membro, LocalDate hoje) {
+        <span class="k">super</span>.validarAcesso(membro, hoje);                 <span class="c">// mantém a regra geral</span>
+        <span class="k">if</span> (!membro.isVip(hoje)) {
+            <span class="k">throw new</span> <span class="t">AcessoNegadoException</span>(<span class="s">"As salas privadas são exclusivas do plano VIP."</span>);
+        }
+    }
+}</pre>
+<p>No <code>ReservaService</code>, a validação fica em uma linha: <code>espaco.validarAcesso(membro, hoje)</code>. O serviço não precisa saber se a sala é privada, porque o objeto certo responde.</p>
+
+<!-- ======================= 5. DEMONSTRAÇÃO ======================= -->
+<h2 class="quebra">5. Demonstração prática</h2>
+<p>As telas abaixo foram capturadas do sistema em execução, com os dados de demonstração criados na primeira inicialização.</p>
+<div class="duas">
+  <figure><img src="../screenshots/01-login.jpg" alt="Tela de login"><figcaption>Figura 1: Login, com as contas de demonstração.</figcaption></figure>
+  <figure><img src="../screenshots/02-painel-membro.jpg" alt="Painel do membro"><figcaption>Figura 2: Painel do membro VIP (plano, próximas reservas, visitantes e avisos).</figcaption></figure>
+</div>
+<figure><img src="../screenshots/03-agenda.jpg" alt="Agenda de ocupação"><figcaption>Figura 3: Agenda de ocupação. Verde-escuro: reservas do membro; cinza: reservado; listrado: horário encerrado. Um clique num horário livre abre a reserva.</figcaption></figure>
+<div class="duas">
+  <figure><img src="../screenshots/04-resumo-reserva.jpg" alt="Resumo da reserva"><figcaption>Figura 4: Passo 2 da reserva. Sala de reunião por 2h com desconto VIP de 20% e pagamento com cartão.</figcaption></figure>
+  <figure><img src="../screenshots/05-conflito.jpg" alt="Conflito de horário"><figcaption>Figura 5: Regra de sobreposição. O sistema recusa e sugere o próximo horário livre.</figcaption></figure>
+</div>
+<div class="duas">
+  <figure><img src="../screenshots/06-evento.jpg" alt="Evento especial"><figcaption>Figura 6: Evento especial com desconto VIP de 15% e período de pré-venda.</figcaption></figure>
+  <figure><img src="../screenshots/07-planos.jpg" alt="Planos"><figcaption>Figura 7: Planos e benefícios. A renovação começa após o fim do plano atual.</figcaption></figure>
+</div>
+<figure><img src="../screenshots/08-painel-admin.jpg" alt="Painel do administrador"><figcaption>Figura 8: Painel do administrador com indicadores do dia e do mês e a ocupação das salas.</figcaption></figure>
+<div class="duas">
+  <figure><img src="../screenshots/10-relatorio-horario.jpg" alt="Relatório por horário"><figcaption>Figura 9: Ocupação por horário e sala (mapa de calor e gráfico), com exportação para PDF e CSV.</figcaption></figure>
+  <figure><img src="../screenshots/11-relatorio-financeiro.jpg" alt="Relatório financeiro"><figcaption>Figura 10: Relatório financeiro: receita por origem (planos, reservas, eventos e multas).</figcaption></figure>
+</div>
+
+<h3>5.1 Roteiro sugerido para a apresentação</h3>
+<ol>
+  <li>Entrar como <code>ana@email.com</code> (VIP). Mostrar o painel e a agenda, e reservar uma sala de reunião para ver o desconto de 20%.</li>
+  <li>Tentar reservar o mesmo horário para ver a mensagem de conflito com a sugestão de horário.</li>
+  <li>Cancelar a reserva do auditório de amanhã para ver a multa de 50% (menos de 24h).</li>
+  <li>Cadastrar 3 visitantes e tentar o quarto para ver o limite.</li>
+  <li>Entrar como <code>bruno@email.com</code> (Mensal). Tentar a sala privada (acesso negado), uma data com mais de 7 dias e o evento em pré-venda VIP. Entrar na lista de espera do evento lotado.</li>
+  <li>Entrar como <code>admin@openoffice.com</code>. Mostrar o painel, criar um evento, gerar relatórios e baixar o PDF.</li>
+</ol>
+
+<!-- ======================= 6. ERROS ======================= -->
+<h2 class="quebra">6. Tratamento de erros</h2>
+<table>
+  <tr><th style="width:30%">Situação</th><th>Como o sistema reage</th></tr>
+  <tr><td>Campo vazio ou formato inválido</td><td>Validação do formulário: o campo fica vermelho com a mensagem em português e os dados digitados são mantidos.</td></tr>
+  <tr><td>Regra de negócio violada</td><td>O serviço lança uma exceção específica (ex.: <code>HorarioIndisponivelException</code>). O controller mostra a mensagem na mesma tela, sem perder o que foi preenchido.</td></tr>
+  <tr><td>Endereço inexistente, data inválida na URL, acesso sem permissão</td><td>Páginas próprias para 404, 400 e 403, com botão para voltar.</td></tr>
+  <tr><td>Erro inesperado</td><td>O tratador global mostra a página 500 com uma mensagem amigável (sem <i>stack trace</i>) e registra o erro no log.</td></tr>
+  <tr><td>Arquivo de dados ausente</td><td>O sistema começa com a lista vazia e mostra um aviso no painel do administrador.</td></tr>
+  <tr><td>Arquivo de dados corrompido</td><td>O arquivo é movido para <code>data/backup/corrompidos/</code> e o sistema continua funcionando.</td></tr>
+  <tr><td>Falha ao gravar</td><td>A gravação é atômica (arquivo temporário + substituição), então o arquivo original não fica pela metade.</td></tr>
+  <tr><td>Cartão recusado</td><td>O pagamento é validado antes de gravar qualquer coisa. Se for recusado, nem a reserva nem a cobrança são salvas.</td></tr>
+</table>
+<figure style="max-width: 60%"><img src="../screenshots/12-erro-404.jpg" alt="Página 404"><figcaption>Figura 11: Página de erro amigável para um registro inexistente.</figcaption></figure>
+
+<!-- ======================= 7. DESAFIOS ======================= -->
+<h2>7. Desafios e soluções</h2>
+<table>
+  <tr><th style="width:32%">Desafio</th><th>Solução adotada</th></tr>
+  <tr><td>Gravar e ler subclasses em JSON (uma <code>SalaPrivada</code> precisa voltar como <code>SalaPrivada</code>)</td><td>Anotações <code>@JsonTypeInfo</code>/<code>@JsonSubTypes</code> nas classes abstratas e um <code>ObjectMapper</code> configurado para ler os atributos privados, sem exigir setters públicos (preservando o encapsulamento).</td></tr>
+  <tr><td>Detectar sobreposição de horários</td><td>Dois intervalos se sobrepõem quando <code>inicioA &lt; fimB</code> e <code>inicioB &lt; fimA</code>. A regra ficou no método <code>Reserva.sobrepoe()</code>, que também permite reservas "encostadas" (uma termina às 16h e outra começa às 16h).</td></tr>
+  <tr><td>Testar regras que dependem da data atual (24h, 7/30 dias, vencimento)</td><td>Os serviços recebem um <code>Clock</code> em vez de chamar <code>LocalDateTime.now()</code>. Nos testes o relógio é fixado numa data (<code>openoffice.relogio-fixo</code>).</td></tr>
+  <tr><td>Cobrar plano, reserva e evento sem duplicar código</td><td>Interface <code>Cobravel</code>: o serviço financeiro recebe qualquer item cobrável e gera a cobrança e o pagamento.</td></tr>
+  <tr><td>Não gravar nada se o pagamento falhar</td><td>Os dados do pagamento são validados antes de salvar a reserva ou a inscrição.</td></tr>
+  <tr><td>Multa sobre um valor já pago</td><td>Ao cancelar, a cobrança original é estornada e uma nova cobrança do tipo "Multa" registra os 50% retidos. Assim o relatório financeiro mostra a origem de cada valor.</td></tr>
+  <tr><td>Google Drive com conta pessoal</td><td>Contas de serviço não têm espaço no Drive pessoal. A solução foi OAuth de "aplicativo instalado" com escopo <code>drive.file</code> e token salvo localmente.</td></tr>
+</table>
+<div class="caixa-preencher"><p><strong>Personalizar:</strong> acrescente desafios que a equipe viveu de verdade (ex.: conflitos no Git, configuração do Java/IDE, divisão de tarefas).</p></div>
+
+<!-- ======================= 8. BIBLIOTECAS ======================= -->
+<h2>8. Bibliotecas utilizadas</h2>
+<table>
+  <tr><th style="width:30%">Biblioteca (versão)</th><th>Motivo da escolha</th></tr>
+  <tr><td>Spring Boot 3.3.5 (Web, Thymeleaf, Validation)</td><td>Servidor web embutido (não exige instalar Tomcat), páginas HTML geradas no servidor e validação de formulários por anotações.</td></tr>
+  <tr><td>Jackson 2.17 (incluso no Spring)</td><td>Leitura e gravação de JSON com suporte a herança (tipos polimórficos) e às datas do <code>java.time</code>.</td></tr>
+  <tr><td>spring-security-crypto 6.3</td><td>Apenas o algoritmo BCrypt, para guardar senhas com segurança sem adotar o Spring Security inteiro.</td></tr>
+  <tr><td>iText 8.0.5 (kernel e layout)</td><td>Geração dos relatórios em PDF, conforme a recomendação do enunciado.</td></tr>
+  <tr><td>Bootstrap 5.3.3 e Bootstrap Icons 1.11.3 (WebJars)</td><td>Layout responsivo e ícones. Por virem empacotados no projeto, funcionam sem internet na apresentação.</td></tr>
+  <tr><td>Chart.js 4.4.1 (WebJar)</td><td>Gráficos de barras nos relatórios.</td></tr>
+  <tr><td>Google API Client 2.7.0 e Drive API v3</td><td>Desafio de sincronizar os dados com o Google Drive.</td></tr>
+  <tr><td>JUnit 5, AssertJ e MockMvc</td><td>Testes automatizados das regras de negócio e das páginas.</td></tr>
+</table>
+
+<!-- ======================= 9. INDIVIDUAL ======================= -->
+<h2 class="quebra">9. O que cada integrante fez</h2>
+<div class="caixa-preencher"><p><strong>Preencher pela equipe.</strong> O professor avalia a contribuição individual. Descreva com sinceridade o que cada pessoa fez (classes, telas, testes, relatório, apresentação).</p></div>
+<table>
+  <tr><th style="width:25%">Integrante</th><th>Contribuição</th></tr>
+  <tr><td><span class="preencher">[Integrante 1]</span></td><td><span class="preencher">[ex.: modelo de domínio (Espaco e subclasses, Reserva), ReservaService e testes de reserva]</span></td></tr>
+  <tr><td><span class="preencher">[Integrante 2]</span></td><td><span class="preencher">[ex.: planos, pagamentos (Cobravel, Pagamento e subclasses) e FinanceiroService]</span></td></tr>
+  <tr><td><span class="preencher">[Integrante 3]</span></td><td><span class="preencher">[ex.: eventos, lista de espera e visitantes]</span></td></tr>
+  <tr><td><span class="preencher">[Integrante 4]</span></td><td><span class="preencher">[ex.: telas Thymeleaf, layout e login]</span></td></tr>
+  <tr><td><span class="preencher">[Integrante 5]</span></td><td><span class="preencher">[ex.: persistência JSON, relatórios PDF/CSV, Google Drive e README]</span></td></tr>
+</table>
+
+<h2>10. Experiência dos integrantes</h2>
+<div class="caixa-preencher">
+  <p><strong>Preencher individualmente.</strong> O enunciado pede a experiência de cada aluno. Sugestão de roteiro para cada integrante (3 a 5 linhas):</p>
+  <ul>
+    <li>O que mais gostou de fazer no projeto?</li>
+    <li>Qual foi a maior dificuldade e como resolveu?</li>
+    <li>O quanto aprendeu (POO, Git, Spring, organização em equipe)?</li>
+  </ul>
+</div>
+<p><strong><span class="preencher">[Integrante 1]</span>:</strong> <span class="preencher">[texto]</span></p>
+<p><strong><span class="preencher">[Integrante 2]</span>:</strong> <span class="preencher">[texto]</span></p>
+<p><strong><span class="preencher">[Integrante 3]</span>:</strong> <span class="preencher">[texto]</span></p>
+<p><strong><span class="preencher">[Integrante 4]</span>:</strong> <span class="preencher">[texto]</span></p>
+<p><strong><span class="preencher">[Integrante 5]</span>:</strong> <span class="preencher">[texto]</span></p>
+
+<!-- ======================= 11. CONCLUSÃO ======================= -->
+<h2>11. Conclusão e possíveis melhorias</h2>
+<p>O sistema atende aos cinco requisitos obrigatórios do enunciado e às regras específicas de cada módulo (preços, descontos, antecedência, multa, limite de visitantes e prioridade VIP), além do desafio do Google Drive. A separação em camadas e o uso de herança, polimorfismo, encapsulamento e abstração deixaram as regras concentradas nos objetos certos. Isso facilitou os testes: as 43 verificações automatizadas cobrem as regras principais.</p>
+<p>Melhorias futuras:</p>
+<ul>
+  <li>Integração com um gateway de pagamento real (PIX e cartão) e emissão de nota fiscal.</li>
+  <li>Envio de e-mails e notificações push (confirmação, lembrete de reserva, vaga liberada).</li>
+  <li>Prazo para pagamento das vagas da lista de espera, com rotina agendada.</li>
+  <li>Banco de dados (PostgreSQL) com JPA, aproveitando a interface <code>Repositorio&lt;T&gt;</code>.</li>
+  <li>Spring Security completo (CSRF, "lembrar de mim", recuperação de senha) e implantação na nuvem com HTTPS.</li>
+  <li>Reservas recorrentes (ex.: toda segunda das 9h às 11h) e check-in por QR Code para visitantes.</li>
+  <li>Aplicativo móvel consumindo uma API REST criada a partir dos mesmos serviços.</li>
+</ul>
+
+<!-- ======================= 12. REFERÊNCIAS ======================= -->
+<h2>12. Referências consultadas</h2>
+<ol class="ref">
+  <li>Spring Boot: documentação de referência. https://docs.spring.io/spring-boot/index.html</li>
+  <li>Thymeleaf: Tutorial "Thymeleaf + Spring". https://www.thymeleaf.org/doc/tutorials/3.1/thymeleafspring.html</li>
+  <li>Jakarta Bean Validation / Spring: validação de formulários. https://spring.io/guides/gs/validating-form-input</li>
+  <li>Jackson: Polymorphic Type Handling. https://github.com/FasterXML/jackson-docs/wiki/JacksonPolymorphicDeserialization</li>
+  <li>Spring Security: Password Storage (BCrypt). https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html</li>
+  <li>iText 8: Knowledge Base. https://kb.itextpdf.com/itext/</li>
+  <li>Google Drive API: Java quickstart. https://developers.google.com/drive/api/quickstart/java</li>
+  <li>Bootstrap 5.3: documentação. https://getbootstrap.com/docs/5.3/</li>
+  <li>Chart.js: documentação. https://www.chartjs.org/docs/latest/</li>
+  <li>JUnit 5: User Guide. https://junit.org/junit5/docs/current/user-guide/</li>
+  <li>Refactoring.Guru: Template Method e Factory Method. https://refactoring.guru/design-patterns</li>
+  <li>Algoritmo de Luhn (validação de cartões). https://en.wikipedia.org/wiki/Luhn_algorithm</li>
+  <li>Oracle: The Java Tutorials, Object-Oriented Programming Concepts. https://docs.oracle.com/javase/tutorial/java/concepts/</li>
+</ol>
+<div class="caixa-preencher"><p><strong>Personalizar:</strong> acrescente vídeos, fóruns (Stack Overflow, GitHub Issues) e materiais de aula que a equipe realmente consultou.</p></div>
+
+</body>
+</html>
